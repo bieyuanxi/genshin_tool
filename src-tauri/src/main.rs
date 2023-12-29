@@ -7,6 +7,19 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[tauri::command]
+fn get_authkey(path: &str) -> String {
+    todo!()
+}
+
+fn store_authkey() -> bool {
+    todo!()
+}
+
+fn query_record(game_id: i32, user: &str) {
+    
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet])

@@ -6,3 +6,12 @@ This template should help get you started developing with Tauri + Vue 3 in Vite.
 
 - [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
 # genshin_tool
+
+## function
+1. wish authkey acquire & store & update
+1. wish show using piechart
+1. wish record query & analysis
+1. wish export
+1. wish import
+1. theme
+1. i18n
