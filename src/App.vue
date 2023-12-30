@@ -9,9 +9,7 @@
             <!-- <n-switch v-model:value="collapsed" /> -->
             <n-layout>
                 <span>{{ activeKey }}</span>
-                <Statistics v-if="activeKey == 'statistics'" />
-                <Chart v-else-if="activeKey == 'chart'" />
-                <Setting v-else-if="activeKey == 'setting'" />
+                <router-view></router-view>
             </n-layout>
         </n-layout>
     </n-space>
@@ -19,19 +17,24 @@
   
 <script setup>
 import { h, ref } from "vue";
+import { RouterLink } from "vue-router";
 import { NIcon, NLayout, NLayoutSider, NSpace, NSwitch, NMenu } from "naive-ui";
 import {
     BookOutline as BookIcon,
     PersonOutline as PersonIcon,
-    WineOutline as WineIcon
+    WineOutline as WineIcon,
+    HomeOutline as HomeIcon
 } from "@vicons/ionicons5";
-
-import Statistics from "./components/Statistics.vue"
-import Setting from "./components/Setting.vue"
-import Chart from "./components/Chart.vue";
 
 function renderIcon(icon) {
     return () => h(NIcon, null, { default: () => h(icon) });
+}
+
+function routerLink(to, name) {
+    return () => h(RouterLink,
+        { to: to },
+        { default: () => name }
+    );
 }
 
 const activeKey = ref("setting");
@@ -39,29 +42,43 @@ const collapsed = ref(true);
 
 const menuOptions = [
     {
-        label: "page1",
+        label: routerLink("/page1", "Page1"),
         key: "page1",
         disabled: false,
         icon: renderIcon(BookIcon)
     },
     {
-        label: "Chart",
+        label: routerLink("/chart", "Chart"),
         key: "chart",
         disabled: false,
         icon: renderIcon(WineIcon)
     },
     {
-        label: "Statistics",
+        label: routerLink("/statistics", "Statistics"),
         key: "statistics",
         disabled: false,
         icon: renderIcon(PersonIcon)
     },
     {
-        label: "Setting",
+        label: routerLink("/setting", "Setting"),
         key: "setting",
         disabled: false,
         icon: renderIcon(BookIcon)
     },
+    {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                    to: {
+                        path: '/zh-CN/os-theme/components/code'
+                    }
+                },
+                { default: () => '上班' }
+            ),
+        key: 'go-to-work',
+        icon: renderIcon(HomeIcon)
+    }
 ];
 
 

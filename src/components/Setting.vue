@@ -11,11 +11,13 @@
                     <n-anchor-link title="固定" href="#affix.vue" />
                     <n-anchor-link title="滚动到" href="#Forbidden.vue" />
                 </n-anchor-link>
-                <n-anchor-link title="About" href="#About.vue" />
+                <n-anchor-link title="About" href="#setting/about" />
             </n-anchor>
         </n-layout-sider>
 
-        <About></About>
+        <n-layout>
+            <router-view name="sub_view"></router-view>
+        </n-layout>
     </n-layout>
 </template>
 
