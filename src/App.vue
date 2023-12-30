@@ -2,13 +2,14 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import Greet from "./components/Greet.vue";
-import Main from "./components/Main.vue"
+import Demo from "./components/Demo.vue";
+import AppMain from "./components/AppMain.vue";
 
 </script>
 
 <template>
   <div class="container">
-    <h1>Welcome to Tauri!</h1>
+    <!-- <h1>Welcome to Tauri!</h1>
 
     <div class="row">
       <a href="https://vitejs.dev" target="_blank">
@@ -39,9 +40,12 @@ import Main from "./components/Main.vue"
       >
     </p>
 
-    <Greet />
+    <Greet /> -->
 
-    <Main />
+    <!-- <Demo /> -->
+
+    <AppMain />
+    
   </div>
 </template>
 
