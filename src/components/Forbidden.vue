@@ -7,7 +7,5 @@
 </template>
 
 <script setup>
-// import {NResult} from "naive-ui"
-
 
 </script>

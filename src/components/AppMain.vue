@@ -10,7 +10,7 @@
             <n-layout>
                 <span>{{activeKey}}</span>
                 <div>
-                    <Statistics v-if="activeKey == 'statistics'"></Statistics>
+                    <Statistics v-if="activeKey == 'statistics'" />
                     <Setting v-else-if="activeKey == 'setting'" />
                 </div>
                 
