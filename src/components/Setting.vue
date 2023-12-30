@@ -1,13 +1,30 @@
 <template>
-    <n-result status="403" title="403 禁止访问" description="总有些门是对你关闭的">
-        <template #footer>
-            <n-button>放轻松</n-button>
-        </template>
-    </n-result>
+    <n-layout has-sider>
+        <n-layout-sider bordered content-style="padding: 12px;">
+            <n-space style="margin-bottom: 12px">
+                <n-switch v-model:value="showRail" /> 展示轨道
+                <n-switch v-model:value="showBackground" /> 展示背景
+            </n-space>
+            <n-anchor :show-rail="showRail" :show-background="showBackground">
+                <n-anchor-link title="演示" href="#演示">
+                    <n-anchor-link title="Theme" href="#basic.vue" />
+                    <n-anchor-link title="固定" href="#affix.vue" />
+                    <n-anchor-link title="滚动到" href="#Forbidden.vue" />
+                </n-anchor-link>
+                <n-anchor-link title="About" href="#About.vue" />
+            </n-anchor>
+        </n-layout-sider>
+
+        <About></About>
+    </n-layout>
 </template>
 
+  
 <script setup>
-// import {NResult} from "naive-ui"
+import { defineComponent, ref } from "vue";
+import About from "./About.vue"
 
+const showRail = ref(true);
+const showBackground = ref(true);
 
 </script>

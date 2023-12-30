@@ -12,7 +12,7 @@
                 </tr>
             </tbody>
         </n-table>
-        <n-pagination v-model:page="page" :page-count="page_cnt" />
+        <n-pagination v-model:page="page" :page-count="page_cnt"/>
     </n-space>
 
 </template>
