@@ -7,6 +7,8 @@
 </template>
 
 <script setup>
-import {NResult} from "naive-ui"
+// import {NResult} from "naive-ui"
+
+const a = ref
 
 </script>
