@@ -13,8 +13,8 @@
         <n-button type="success">
             Read AuthKey
         </n-button>
-        <n-button type="warning">
-            Warning
+        <n-button type="warning" @click="router.replace('/chart')">
+            Router
         </n-button>
         <n-button type="error">
             Error
@@ -25,6 +25,7 @@
 
 <script setup>
 import { requestJson, requestText } from "../get_data";
+import router from "../router"
 
 async function request_genshin_data() {
 
@@ -37,6 +38,7 @@ async function request_genshin_data() {
     // });
 
 }
+
 
 
 

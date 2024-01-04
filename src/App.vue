@@ -26,6 +26,8 @@ import {
     HomeOutline as HomeIcon
 } from "@vicons/ionicons5";
 
+import router from "./router"
+
 function renderIcon(icon) {
     return () => h(NIcon, null, { default: () => h(icon) });
 }
@@ -39,6 +41,9 @@ function routerLink(to, name) {
 
 const activeKey = ref("setting");
 const collapsed = ref(true);
+
+// app load success, first page
+router.push("/" + activeKey.value);
 
 const menuOptions = [
     {
