@@ -15,6 +15,10 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "http": {
+        "request": true,
+        "scope": ["https://example.com/*", "https://hk4e-api.mihoyo.com/*"]
       }
     },
     "bundle": {
