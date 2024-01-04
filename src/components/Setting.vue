@@ -12,6 +12,8 @@
                     <n-anchor-link title="滚动到" href="#Forbidden.vue" />
                 </n-anchor-link>
                 <n-anchor-link title="About" href="#setting/about" />
+                
+                <n-anchor-link title="Debug" href="#setting/debug" />
             </n-anchor>
         </n-layout-sider>
 

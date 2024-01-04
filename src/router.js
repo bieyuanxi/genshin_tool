@@ -6,6 +6,8 @@ import NotFound from "./components/NotFound.vue"
 import Statistics from "./components/Statistics.vue"
 import About from "./components/About.vue"
 
+import Debug from "./components/Debug.vue"
+
 const routes = [
   { path: '/statistics', component: Statistics },
   {
@@ -15,6 +17,12 @@ const routes = [
         path: 'about',
         components: {
           sub_view: About
+        }
+      },
+      {
+        path: 'debug',  //debug
+        components: {
+          sub_view: Debug
         }
       },
     ]
