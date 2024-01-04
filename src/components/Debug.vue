@@ -25,12 +25,19 @@
 
 <script setup>
 import { requestJson, requestText } from "../get_data";
-import router from "../router"
+import router from "../router";
+import { apiDomain, apiPath } from "../config";
 
 async function request_genshin_data() {
-
-    requestJson("https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog").then((data) => {
+    const queryString = "";
+    const url = `${apiDomain}/${apiPath}?${queryString}`;
+    requestJson(url).then((data) => {
         console.log(data);
+        if (data.retcode != 0) {
+            console.log("request_genshin_data fail: " + data.message);
+        }else {
+            console.log("request_genshin_data success");
+        }
     });
 
     // requestText("https://example.com/").then((data) => {

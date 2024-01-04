@@ -27,6 +27,7 @@ import {
 } from "@vicons/ionicons5";
 
 import router from "./router"
+import { firstPage } from "./config"
 
 function renderIcon(icon) {
     return () => h(NIcon, null, { default: () => h(icon) });
@@ -39,7 +40,7 @@ function routerLink(to, name) {
     );
 }
 
-const activeKey = ref("setting");
+const activeKey = ref(firstPage);
 const collapsed = ref(true);
 
 // app load success, first page
