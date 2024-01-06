@@ -4,7 +4,7 @@
         <n-button type="tertiary">
             Load Config
         </n-button>
-        <n-button type="primary" @click="request_genshin_data">
+        <n-button type="primary" @click="getGachaLog({type:1, page: 100})">
             Request Genshin Data
         </n-button>
         <n-button type="info">
@@ -24,14 +24,14 @@
 
 
 <script setup>
-import { requestJson, requestText } from "../get_data";
 import router from "../router";
-import { apiDomain, apiPath } from "../config";
+import { readLog, getGachaLog } from "../genshin";
 
-async function request_genshin_data() {
-    const queryString = "";
+// deprecated!
+async function request_genshin_data({ key, page, authKey, retryCount, endId }) {
+    const queryString = `authkey=${authKey}&gacha_type=${key}&page=${page}&size=${20}${endId ? '&end_id=' + endId : ''}`;
     const url = `${apiDomain}/${apiPath}?${queryString}`;
-    requestJson(url).then((data) => {
+    await requestJson(url).then((data) => {
         console.log(data);
         if (data.retcode != 0) {
             console.log("request_genshin_data fail: " + data.message);
@@ -39,11 +39,6 @@ async function request_genshin_data() {
             console.log("request_genshin_data success");
         }
     });
-
-    // requestText("https://example.com/").then((data) => {
-    //     console.log(data); // JSON data parsed by `data.json()` call
-    // });
-
 }
 
 
