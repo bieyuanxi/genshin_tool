@@ -7,7 +7,7 @@
                     :options="menuOptions" />
             </n-layout-sider>
             <!-- <n-switch v-model:value="collapsed" /> -->
-            <n-layout>
+            <n-layout  content-style="padding: 12px;">
                 <span>{{ activeKey }}</span>
                 <router-view></router-view>
             </n-layout>
