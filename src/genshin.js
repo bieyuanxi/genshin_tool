@@ -1,5 +1,5 @@
 import { apiDomain, apiPath } from "./config";
-import { requestJson, requestText } from "./get_data";
+import { requestJson, requestText } from "./request";
 
 // read genshin log, return authkey
 export async function readLog() {
@@ -14,8 +14,14 @@ export async function getGachaLog({type, page, endId}) {
         console.log(key);
     });
 
-    const queryString = `authkey=${authKey}&gacha_type=${type}&page=${page}&size=${20}${endId ? '&end_id=' + endId : ''}`;
+    const queryString = `authkey=${authKey} \
+        &gacha_type=${type} \
+        &page=${page}   \
+        &size=${20} \
+        ${endId ? '&end_id=' + endId : ''}`;
+
     const url = `${apiDomain}/${apiPath}?${queryString}`;
+
     await requestJson(url).then((data) => {
         console.log(data);
         if (data.retcode != 0) {

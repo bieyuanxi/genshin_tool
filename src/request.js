@@ -24,14 +24,6 @@ async function requestText(url = "", query = {}) {
     return response.data;
 }
 
-function readAuthKey() {
-
-}
-
-function getAuthKey(path) {
-    return "TODO";
-}
-
-export { requestJson, requestText, getAuthKey };
+export { requestJson, requestText };
 
 
