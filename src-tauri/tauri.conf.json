@@ -3,10 +3,11 @@
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
     "devPath": "http://localhost:1420",
-    "distDir": "../dist"
+    "distDir": "../dist",
+    "withGlobalTauri": true
   },
   "package": {
-    "productName": "genshin_tool",
+    "productName": "flyme2genshin",
     "version": "0.0.0"
   },
   "tauri": {
@@ -19,12 +20,25 @@
       "http": {
         "request": true,
         "scope": ["https://example.com/*", "https://hk4e-api.mihoyo.com/*"]
+      },
+      "fs": {
+        "all": true,
+        "readFile": true,
+        "writeFile": true,
+        "readDir": true,
+        "copyFile": true,
+        "createDir": true,
+        "removeDir": true,
+        "removeFile": true,
+        "renameFile": true,
+        "exists": true,
+        "scope": ["$CONFIG/*", "$CONFIG/**"]
       }
     },
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "org.flyme2genshin.dev",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -40,7 +54,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "genshin_tool",
+        "title": "flyme2genshin",
         "width": 800,
         "height": 600
       }

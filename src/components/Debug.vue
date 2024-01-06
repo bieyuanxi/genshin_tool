@@ -16,8 +16,8 @@
         <n-button type="warning" @click="router.replace('/chart')">
             Router
         </n-button>
-        <n-button type="error">
-            Error
+        <n-button type="error" @click="console.log(sys_config)">
+            Show Config
         </n-button>
     </n-space>
 </template>
@@ -26,6 +26,7 @@
 <script setup>
 import router from "../router";
 import { readLog, getGachaLog } from "../genshin";
+import { sys_config } from "../config";
 
 // deprecated!
 async function request_genshin_data({ key, page, authKey, retryCount, endId }) {

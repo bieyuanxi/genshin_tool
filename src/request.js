@@ -1,13 +1,13 @@
 import { fetch, ResponseType } from '@tauri-apps/api/http';
 
-// import config from "./config"
+import {timeout} from "./config"
 
 // request json
 async function requestJson(url = "", query = {}) {
     const response = await fetch(url, {
         method: "GET",
         responseType: ResponseType.JSON,    // response json
-        timeout: 15 * 1000,
+        timeout,
         query
     });
     return response.data;
@@ -18,7 +18,7 @@ async function requestText(url = "", query = {}) {
     const response = await fetch(url, {
         method: "GET",
         responseType: ResponseType.Text,    // response text
-        timeout: 15 * 1000,
+        timeout,
         query
     });
     return response.data;
