@@ -7,7 +7,7 @@
         <n-button type="primary" @click="getGachaLog({type:1, page: 100})">
             Request Genshin Data
         </n-button>
-        <n-button type="info">
+        <n-button type="info" @click="call_backend">
             Store Data to DB
         </n-button>
         <n-button type="success">
@@ -27,6 +27,7 @@
 import router from "../router";
 import { readLog, getGachaLog } from "../genshin";
 import { sys_config } from "../config";
+import { invoke } from "@tauri-apps/api"
 
 // deprecated!
 async function request_genshin_data({ key, page, authKey, retryCount, endId }) {
@@ -43,6 +44,9 @@ async function request_genshin_data({ key, page, authKey, retryCount, endId }) {
 }
 
 
-
+async function call_backend() {
+    let ret = await invoke('create_table');
+    console.log(ret);
+}
 
 </script>
