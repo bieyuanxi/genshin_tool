@@ -7,5 +7,6 @@
 </template>
 
 <script setup>
+import { NResult, NButton } from "naive-ui"
 
 </script>

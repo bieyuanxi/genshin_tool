@@ -1,8 +1,8 @@
 <template>
-  <n-space vertical>
+  <n-flex vertical>
     <n-switch v-model:value="collapsed" />
     <n-layout has-sider>
-      <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
+      <n-layout-sider bordered :collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
         show-trigger @collapse="collapsed = true" @expand="collapsed = false">
         <n-menu :collapsed="collapsed" v-model:value="current_page" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions"
           :render-label="renderMenuLabel" :render-icon="renderMenuIcon" :expand-icon="expandIcon" />
@@ -11,7 +11,7 @@
         <span>内容</span>
       </n-layout>
     </n-layout>
-  </n-space>
+  </n-flex>
 </template>
 
 <script setup>

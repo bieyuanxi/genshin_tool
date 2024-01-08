@@ -25,6 +25,7 @@ import {
 } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
 import { ref, provide } from 'vue';
+import { NGrid, NGi } from "naive-ui"
 
 use([
     CanvasRenderer,

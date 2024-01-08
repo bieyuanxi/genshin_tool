@@ -1,5 +1,5 @@
 <template>
-    <n-space vertical>
+    <n-flex vertical>
         <n-table striped>
             <thead>
                 <tr>
@@ -12,17 +12,17 @@
                 </tr>
             </tbody>
         </n-table>
-        <n-space justify="space-around">
+        <n-flex justify="space-around">
             <n-pagination v-model:page="page" :page-count="page_cnt" />
-        </n-space>
+        </n-flex>
 
 
-    </n-space>
+    </n-flex>
 </template>
   
 <script setup>
 import { defineComponent, ref } from "vue";
-import { NPagination } from "naive-ui"
+import { NPagination, NFlex, NTable } from "naive-ui"
 
 const form_header = [   //fields wanna show
     "id", "item_type", "rank_type", "name", "time"

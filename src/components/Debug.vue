@@ -1,5 +1,5 @@
 <template>
-    <n-space>
+    <n-flex>
         <n-button>Default</n-button>
         <n-button type="tertiary">
             Load Config
@@ -19,15 +19,17 @@
         <n-button type="error" @click="console.log(sys_config)">
             Show Config
         </n-button>
-    </n-space>
+    </n-flex>
 </template>
 
 
 <script setup>
+import { invoke } from "@tauri-apps/api"
+import { NFlex } from "naive-ui"
+
 import router from "../router";
 import { readLog, getGachaLog, getGaChaAuthKey } from "../genshin";
 import { sys_config } from "../config";
-import { invoke } from "@tauri-apps/api"
 
 // deprecated!
 async function request_genshin_data({ key, page, authKey, retryCount, endId }) {
