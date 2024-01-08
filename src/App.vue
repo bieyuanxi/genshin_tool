@@ -23,7 +23,11 @@ import {
     BookOutline as BookIcon,
     PersonOutline as PersonIcon,
     WineOutline as WineIcon,
-    HomeOutline as HomeIcon
+    HomeOutline as HomeIcon,
+    BugOutline as BugIon,
+    SettingsOutline as SettingsIcon,
+    DocumentOutline as DocumentIcon,
+    PieChartOutline as PieChartIcon,
 } from "@vicons/ionicons5";
 
 import router from "./router"
@@ -57,34 +61,26 @@ const menuOptions = [
         label: routerLink("/chart", "Chart"),
         key: "chart",
         disabled: false,
-        icon: renderIcon(WineIcon)
+        icon: renderIcon(PieChartIcon)
     },
     {
         label: routerLink("/statistics", "Statistics"),
         key: "statistics",
         disabled: false,
-        icon: renderIcon(PersonIcon)
+        icon: renderIcon(DocumentIcon)
     },
     {
         label: routerLink("/setting", "Setting"),
         key: "setting",
         disabled: false,
-        icon: renderIcon(BookIcon)
+        icon: renderIcon(SettingsIcon)
     },
     {
-        label: () =>
-            h(
-                RouterLink,
-                {
-                    to: {
-                        path: '/zh-CN/os-theme/components/code'
-                    }
-                },
-                { default: () => '上班' }
-            ),
-        key: 'go-to-work',
-        icon: renderIcon(HomeIcon)
-    }
+        label: routerLink("/debug", "Debug"),
+        key: "debug",
+        disabled: false,
+        icon: renderIcon(BugIon)
+    },
 ];
 
 

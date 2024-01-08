@@ -13,7 +13,7 @@
                 </n-anchor-link>
                 <n-anchor-link title="About" href="#setting/about" />
                 
-                <n-anchor-link title="Debug" href="#setting/debug" />
+                <!-- <n-anchor-link title="Debug" href="#setting/debug" /> -->
             </n-anchor>
         </n-layout-sider>
 

@@ -19,16 +19,19 @@ const routes = [
           sub_view: About
         }
       },
-      {
-        path: 'debug',  //debug
-        components: {
-          sub_view: Debug
-        }
-      },
+      // {
+      //   path: 'debug',  //debug
+      //   components: {
+      //     sub_view: Debug
+      //   }
+      // },
     ]
   },
 
   { path: '/chart', component: Chart },
+
+  { path: '/debug', component: Debug },
+
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]
 
