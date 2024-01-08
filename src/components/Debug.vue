@@ -4,13 +4,13 @@
         <n-button type="tertiary">
             Load Config
         </n-button>
-        <n-button type="primary" @click="getGachaLog({type:1, page: 100})">
+        <n-button type="primary" @click="getGachaLog({type:301, endId:0})">
             Request Genshin Data
         </n-button>
         <n-button type="info" @click="call_backend">
             Store Data to DB
         </n-button>
-        <n-button type="success">
+        <n-button type="success" @click="getGaChaAuthKey">
             Read AuthKey
         </n-button>
         <n-button type="warning" @click="router.replace('/chart')">
@@ -25,7 +25,7 @@
 
 <script setup>
 import router from "../router";
-import { readLog, getGachaLog } from "../genshin";
+import { readLog, getGachaLog, getGaChaAuthKey } from "../genshin";
 import { sys_config } from "../config";
 import { invoke } from "@tauri-apps/api"
 

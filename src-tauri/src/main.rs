@@ -5,10 +5,10 @@ mod genshin_service;
 
 use std::path::Path;
 
-use genshin_service::{RetMsg, create_genshin_table};
-use serde::Serialize;
+use genshin_service::{create_genshin_table, read_web_cache, RetMsg};
+
 use sqlx::{
-    sqlite::{SqlitePoolOptions, SqliteQueryResult},
+    sqlite::SqlitePoolOptions,
     Pool, Sqlite,
 };
 
@@ -28,8 +28,6 @@ fn test1() {
 
 
 
-
-
 #[tauri::command]
 async fn pool_request(pool: tauri::State<'_, Pool<Sqlite>>) -> Result<RetMsg, String> {
     let result = sqlx::query("DELETE FROM table").execute(pool.inner()).await;
@@ -38,7 +36,6 @@ async fn pool_request(pool: tauri::State<'_, Pool<Sqlite>>) -> Result<RetMsg, St
         Err(msg) => Err(msg.to_string()),
     }
 }
-
 
 fn main() {
     tauri::Builder::default()
@@ -58,7 +55,13 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet, test1, pool_request, create_genshin_table])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            test1,
+            pool_request,
+            create_genshin_table,
+            read_web_cache
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

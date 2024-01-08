@@ -30,6 +30,7 @@ export const user_config = defaultUserConfig();
 //   .then((response) => console.log(response));
 
 readSysConfig();
+writeSysConfig(sys_config);
 
 //default config
 export function defaultSysConfig() {
