@@ -5,11 +5,12 @@ import Setting from "./components/Setting.vue"
 import NotFound from "./components/NotFound.vue"
 import Statistics from "./components/Statistics.vue"
 import About from "./components/About.vue"
+import DataTable from "./components/DataTable.vue"
 
 import Debug from "./components/Debug.vue"
 
 const routes = [
-  { path: '/statistics', component: Statistics },
+  { path: '/data_table', component: DataTable },
   {
     path: '/setting', component: Setting,
     children: [

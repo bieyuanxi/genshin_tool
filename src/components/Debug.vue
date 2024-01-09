@@ -31,7 +31,7 @@ import Database from "tauri-plugin-sql-api"
 import router from "../router";
 import { readLog, getGachaLog, getGaChaAuthKey } from "../genshin";
 import { sys_config, db_name } from "../config";
-import { write2DB } from "../db"
+import { insertInto, selectFrom } from "../db"
 async function write2db() {
     const data = [
         {
@@ -278,7 +278,7 @@ async function write2db() {
 
     const table = "gacha_log";
 
-    await write2DB(table, data).then(null, (reason) => {
+    await insertInto(table, data).then(null, (reason) => {
         console.log("write failed: " + reason);
     });
 }

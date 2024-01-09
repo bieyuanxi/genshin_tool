@@ -22,22 +22,24 @@ export async function insertInto(table = "", data = []) {
     });
 }
 
-export async function selectFrom(column = ["*"], table = "", where = {}) {
-    if (data.length == 0) return;
-
+export async function selectFrom(column = ["*"], table = "", where = "", limit = 10, offset = 0) {
     let db = await Database.load(db_name);
     const keys = `${column.toString()}`;
     const vals = [];    //each one contains a sql VALUE
 
-    let where_msg = "";
-    for (let [key, val] of Object.entries(where)) {
-        where_msg += "";
+    if (where != "") {
+        where = "WHERE " + where;
     }
 
-    const sql = `SELECT ${keys} FROM ${table} WHERE ${where_msg}`;
-    const ret = await db.execute(sql).finally(async () => {
+    const sql = `SELECT ${keys} FROM ${table} ${where} LIMIT ${limit} OFFSET ${offset}`;
+    // console.log(sql)
+    const ret = await db.select(sql).finally(async () => {
         await db.close(db_name);
     });
+
+    // console.log(ret)
+
+    return ret;
 }
 
 

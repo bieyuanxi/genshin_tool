@@ -64,8 +64,8 @@ const menuOptions = [
         icon: renderIcon(PieChartIcon)
     },
     {
-        label: routerLink("/statistics", "Statistics"),
-        key: "statistics",
+        label: routerLink("/data_table", "Data Table"),
+        key: "data_table",
         disabled: false,
         icon: renderIcon(DocumentIcon)
     },
