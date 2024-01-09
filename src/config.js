@@ -20,6 +20,8 @@ const sysConfigFile = "sys_config.json"
 
 export const GachaLogPath = "./"
 
+export const db_name = "sqlite:test.db"
+
 let _config = defaultSysConfig();
 
 export const sys_config = Object.assign(defaultSysConfig(), readSysConfig());   //merge

@@ -12,6 +12,7 @@
   "dependencies": {
     "@tauri-apps/api": "^1.5.1",
     "echarts": "^5.4.3",
+    "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v1",
     "vue": "^3.3.4",
     "vue-echarts": "^6.6.8",
     "vue-router": "4"
