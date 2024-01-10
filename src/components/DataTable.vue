@@ -1,7 +1,7 @@
 <template>
     <n-flex vertical>
-        <n-data-table remote ref="table" :columns="columnsRef" :data="dataRef" :loading="loadingRef"
-            :pagination="paginationReactive" :row-key="rowKey" @update:sorter="handleSorterChange"
+        <n-data-table flex-height :style="{ height: `90vh` }" remote ref="table" :columns="columnsRef" :data="dataRef"
+            :loading="loadingRef" :pagination="paginationReactive" :row-key="rowKey" @update:sorter="handleSorterChange"
             @update:filters="handleFiltersChange" @update:page="handlePageChange" />
     </n-flex>
 </template>
@@ -32,7 +32,7 @@ const column_rank_type = {
         },
         {
             label: 'star5',
-            value: 2
+            value: 5
         }
     ]
 }
@@ -63,11 +63,16 @@ const data = [];
 
 async function query(page, pageSize = 10, order = 'ascend', filterValues = []) {
     const offset = (page - 1) * pageSize;
-    const ret = await selectFrom(["*"], "gacha_log", "", pageSize, offset);
+    const where = (filterValues.length == 0) ? "" : `rank_type IN (${filterValues.toString()})`;
+
+    const total = await selectFrom("COUNT(*) as count", "gacha_log", where);
+
+    const ret = await selectFrom(["*"], "gacha_log", where, pageSize, offset);
+    
     return {
-        pageCount: 5,
+        // pageCount: 1115,
         data: ret,
-        total: 981 //FIX ME: read total count first
+        total: total[0].count
     }
 }
 
@@ -79,7 +84,7 @@ const columnIdReactive = reactive(column_id)
 const columnRankTypeReactive = reactive(column_rank_type)
 const paginationReactive = reactive({
     page: 1,
-    pageCount: 1,
+    // pageCount: 1,
     pageSize: 10,
     prefix({ itemCount }) {
         return `Total is ${itemCount}.`
@@ -94,7 +99,7 @@ onMounted(() => {
         columnRankTypeReactive.filterOptionValues
     ).then((data) => {
         dataRef.value = data.data
-        paginationReactive.pageCount = data.pageCount
+        // paginationReactive.pageCount = data.pageCount
         paginationReactive.itemCount = data.total
         loadingRef.value = false
     })
@@ -117,7 +122,7 @@ function handleSorterChange(sorter) {
             ).then((data) => {
                 columnIdReactive.sortOrder = !sorter ? false : sorter.order
                 dataRef.value = data.data
-                paginationReactive.pageCount = data.pageCount
+                // paginationReactive.pageCount = data.pageCount
                 paginationReactive.itemCount = data.total
                 loadingRef.value = false
             })
@@ -125,10 +130,13 @@ function handleSorterChange(sorter) {
     }
 }
 
-function handleFiltersChange(filters) {
+function handleFiltersChange(filters, sourceColumn) {
     if (!loadingRef.value) {
         loadingRef.value = true
-        const filterValues = filters.column2 || []
+        // console.log(filters)
+        const filterValues = filters[sourceColumn.key] || []
+
+        // console.log(filterValues)
         query(
             paginationReactive.page,
             paginationReactive.pageSize,
@@ -137,7 +145,7 @@ function handleFiltersChange(filters) {
         ).then((data) => {
             columnRankTypeReactive.filterOptionValues = filterValues
             dataRef.value = data.data
-            paginationReactive.pageCount = data.pageCount
+            // paginationReactive.pageCount = data.pageCount
             paginationReactive.itemCount = data.total
             loadingRef.value = false
         })
@@ -155,7 +163,7 @@ function handlePageChange(currentPage) {
         ).then((data) => {
             dataRef.value = data.data
             paginationReactive.page = currentPage
-            paginationReactive.pageCount = data.pageCount
+            // paginationReactive.pageCount = data.pageCount
             paginationReactive.itemCount = data.total
             loadingRef.value = false
         })
