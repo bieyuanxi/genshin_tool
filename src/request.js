@@ -4,13 +4,14 @@ import {timeout} from "./config"
 
 // request json
 async function requestJson(url = "", query = {}) {
+    // FIX ME: timeout retry
     const response = await fetch(url, {
         method: "GET",
         responseType: ResponseType.JSON,    // response json
         timeout,
         query
     });
-    return response.data;
+    return response;
 }
 
 // request text/HTML

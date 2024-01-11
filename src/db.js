@@ -2,7 +2,7 @@ import Database from "tauri-plugin-sql-api";
 import { db_name } from "./config"
 
 export async function insertInto(table = "", data = []) {
-    if (data.length == 0) return;
+    if (data.length == 0) return null;
 
     let db = await Database.load(db_name);
     const keys = `(${Object.keys(data[0]).toString()})`;
@@ -20,6 +20,8 @@ export async function insertInto(table = "", data = []) {
     const ret = await db.execute(sql).finally(async () => {
         await db.close(db_name);
     });
+
+    return ret;
 }
 
 export async function selectFrom(column = ["*"], table = "", where = "", limit = 10, offset = 0) {

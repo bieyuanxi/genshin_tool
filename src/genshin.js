@@ -3,6 +3,7 @@ import { fetch, ResponseType } from '@tauri-apps/api/http';
 
 import { apiDomain, apiPath } from "./config";
 import { requestJson, requestText } from "./request";
+import { insertInto } from "./db";
 
 // read genshin log, return authkey
 export async function readLog() {
@@ -10,8 +11,8 @@ export async function readLog() {
 }
 
 // get wish log from official web server
-export async function getGachaLog({ type = 301, endId = 0 }) {
-    let authKey = await getGaChaAuthKey();
+export async function requestGachaLog({authKey, type = 301, endId = 0}) {
+    // let authKey = await getGaChaAuthKey();
 
     let url = new URL(`${apiDomain}/${apiPath}`);
     url.searchParams.set("authkey_ver", 1);
@@ -29,23 +30,14 @@ export async function getGachaLog({ type = 301, endId = 0 }) {
     //     end_id: endId,
     //     lang: "zh-cn",
     // }
+    const response = await requestJson(url);
 
-    await requestJson(url).then((data) => {
-        console.log(data);
-        if (data.retcode != 0) {
-            console.log("dbg! request_genshin_data fail: " + data.message);
-            if(data.message == "authkey timeout") {
-                console.log("authkey timeout, please reopen your wish window!");
-            }
-        } else {
-            console.log("dbg! request_genshin_data success");
-        }
-    });
+    return response;
 }
 
 
 export async function getGaChaAuthKey() {
-    return getAuthKeyFromWebCache("/home/terra/Downloads/data_2");
+    return await getAuthKeyFromWebCache("/home/terra/Downloads/data_2");
 }
 
 async function getAuthKeyFromWebCache(file_path) {
@@ -80,4 +72,10 @@ async function getAuthKeyFromWebCache(file_path) {
 
     // const res = await fetch(url + "&gacha_type=301&size=5&end_id=0");
     // console.log(await res.json())
+}
+
+export async function writeGaChaLog(data = []) {
+    const table = "gacha_log";
+
+    return await insertInto(table, data);;
 }

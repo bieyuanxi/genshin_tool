@@ -29,7 +29,7 @@ import { NFlex } from "naive-ui"
 import Database from "tauri-plugin-sql-api"
 
 import router from "../router";
-import { readLog, getGachaLog, getGaChaAuthKey } from "../genshin";
+import { readLog, requestGachaLog, getGaChaAuthKey } from "../genshin";
 import { sys_config, db_name } from "../config";
 import { insertInto, selectFrom } from "../db"
 async function write2db() {

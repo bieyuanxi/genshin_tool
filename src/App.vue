@@ -52,8 +52,8 @@ router.push("/" + activeKey.value);
 
 const menuOptions = [
     {
-        label: routerLink("/page1", "Page1"),
-        key: "page1",
+        label: routerLink("/statistics", "Statistics"),
+        key: "statistics",
         disabled: false,
         icon: renderIcon(BookIcon)
     },
