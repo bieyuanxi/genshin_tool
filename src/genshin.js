@@ -60,7 +60,7 @@ async function getAuthKeyFromWebCache(file_path) {
     //         console.log(authkey);
     //     }
     // }
-    let url = new URL(urlMatch[urlMatch.length - 1]);
+    let url = new URL(urlMatch[urlMatch.length - 1]);   // select latest authkey
     authkey = url.searchParams.get("authkey");
     // console.log(authkey)
     return authkey;

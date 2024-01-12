@@ -2,7 +2,7 @@
     <n-flex>
         <n-drawer v-model:show="active" :width="300" :placement="placement">
             <n-drawer-content :title="title">
-                {{ msg }}
+                {{ error_log }}
             </n-drawer-content>
         </n-drawer>
         <n-button type="primary" @click="updateGenshinWish">
@@ -41,32 +41,46 @@ import { sleep } from "../utils"
 const active = ref(false);
 const placement = ref("right");
 const title = ref("");
-const msg = ref("");
+const error_log = ref("");
 
 const activate = () => {
     active.value = true;
 };
 
-function handle_request(val) {
-    if (val.retcode == 0) { // api return success code
-        // val.data.data;
-    } else {                // api return error code
-        title.value = "warning";
-        msg.value += JSON.stringify(val.data);
-        activate();
-    }
-    console.log(`dbg! updateGenshinWish code: ${val}`);
+function show_error(msg) {
+    title.value = "warning";
+    error_log.value += JSON.stringify(msg);
+    activate();
+    console.log(`dbg! updateGenshinWish code: ${JSON.stringify(msg)}`);
+}
+
+function clear_error_log() {
+    error_log.value = ""; // clear former error_log
 }
 
 async function updateGenshinWish() {
-    msg.value = ""; // clear former msg
+    clear_error_log();
 
     //FIX ME: request until untilEndId
     //1. get latest id
 
-    let authKey = await getGaChaAuthKey();
-    //2. get 100, 200, 301, 302
-    await requestGachaLog({ authKey, type: 301, endId: 0 }).then(handle_request);
+    const authKey = await getGaChaAuthKey()
+        .catch((reason) => {
+            show_error(reason);
+        });
+
+    if (!authKey) return;
+
+    //2. FIX ME: get 100, 200, 301, 302
+    const resp = await requestGachaLog({ authKey, type: 301, endId: 0 })
+        .then((val) => {
+            if (val.retcode != 0) { // api return error code
+                show_error(val.data);
+            }
+            return val.data.data;
+        });
+
+    if (!resp) return;
     // sleep(200);
     // await requestGachaLog({ authKey, type: 302, endId: 0 }).then(handle_request);
     // sleep(200);
@@ -74,9 +88,9 @@ async function updateGenshinWish() {
     // sleep(200);
     // await requestGachaLog({ authKey, type: 100, endId: 0 }).then(handle_request);
 
-    //3. write2db
+    //3. write2db FIX ME: compare before insert
     let data = [];
-    await writeGaChaLog(data).catch((reason) => {
+    const result = await writeGaChaLog(data).catch((reason) => {
         console.log(reason)
     });
 }
