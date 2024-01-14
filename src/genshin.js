@@ -21,7 +21,7 @@ export async function requestGachaLog({authKey, type = 301, endId = 0}) {
     url.searchParams.set("size", 20);
     url.searchParams.set("end_id", endId);
     url.searchParams.set("lang", "zh-cn");
-
+    // console.log(url.search)
     // let query = {
     //     authkey_ver: 1,
     //     authkey: encodeURIComponent(authKey),
@@ -37,7 +37,10 @@ export async function requestGachaLog({authKey, type = 301, endId = 0}) {
 
 
 export async function getGaChaAuthKey() {
-    return await getAuthKeyFromWebCache("/home/terra/Downloads/data_2");
+    let path = import.meta.env.VITE_WEB_CACHE_FILE;
+
+    if(!path) path = "";
+    return await getAuthKeyFromWebCache(path);
 }
 
 async function getAuthKeyFromWebCache(file_path) {
@@ -48,7 +51,7 @@ async function getAuthKeyFromWebCache(file_path) {
     cacheText = cacheText.toString();
     // console.log(cacheText)
     const urlMatch = cacheText.match(/https.+?auth_appid=webview_gacha.+?authkey=.+?game_biz=hk4e_\w+/g);
-    // console.log(urlMatch)
+    console.log(urlMatch)
     cacheText = undefined;
 
     let authkey = null;
