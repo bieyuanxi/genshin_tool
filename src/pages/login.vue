@@ -51,6 +51,7 @@ async function queryStatus() {
         case "Scanned":
             break;
         case "Confirmed":
+            clearInterval(intervalId.value);
             break;
         default:
             console.log("got unknown queryQRLoginStatus!");
