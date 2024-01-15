@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api";
 import { fetch, ResponseType } from '@tauri-apps/api/http';
 
 import { apiDomain, apiPath } from "./config";
-import { requestJson, requestText } from "./request";
+import { getJson, getText } from "./request";
 import { insertInto } from "./db";
 
 // read genshin log, return authkey
@@ -30,7 +30,7 @@ export async function requestGachaLog({authKey, type = 301, endId = 0}) {
     //     end_id: endId,
     //     lang: "zh-cn",
     // }
-    const response = await requestJson(url);
+    const response = await getJson(url);
 
     return response;
 }

@@ -19,7 +19,7 @@
       },
       "http": {
         "request": true,
-        "scope": ["https://example.com/*", "https://hk4e-api.mihoyo.com/*"]
+        "scope": ["https://*", "https://hk4e-api.mihoyo.com/*"]
       },
       "fs": {
         "all": true,

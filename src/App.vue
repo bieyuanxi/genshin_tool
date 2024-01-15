@@ -51,6 +51,12 @@ const collapsed = ref(true);
 router.push("/" + activeKey.value);
 
 const menuOptions = [
+{
+        label: routerLink("/login", "Login"),
+        key: "login",
+        disabled: false,
+        icon: renderIcon(PersonIcon)
+    },
     {
         label: routerLink("/statistics", "Statistics"),
         key: "statistics",

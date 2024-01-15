@@ -1,0 +1,13 @@
+POST https://passport-api.miyoushe.com/account/ma-cn-passport/web/createQRLogin
+x-rpc-app_id: bll8iq97cem8
+x-rpc-device_id: flyme2genshin
+
+
+###
+POST https://passport-api.miyoushe.com/account/ma-cn-passport/web/queryQRLoginStatus
+x-rpc-app_id: bll8iq97cem8
+x-rpc-device_id: flyme2genshin
+
+{
+    "ticket": "e8559e67-1f8f-4b25-82ec-fd1b961737ce"
+}

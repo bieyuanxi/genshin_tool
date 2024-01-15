@@ -6,10 +6,12 @@ import NotFound from "./components/NotFound.vue"
 import Statistics from "./components/Statistics.vue"
 import About from "./components/About.vue"
 import DataTable from "./components/DataTable.vue"
+import Login from "./pages/login.vue"
 
 import Debug from "./components/Debug.vue"
 
 const routes = [
+  { path: '/login', component: Login },
   { path: '/statistics', component: Statistics },
   { path: '/data_table', component: DataTable },
   {
