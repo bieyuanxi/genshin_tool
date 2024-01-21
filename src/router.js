@@ -7,11 +7,12 @@ import Statistics from "./components/Statistics.vue"
 import About from "./components/About.vue"
 import DataTable from "./components/DataTable.vue"
 import Login from "./pages/login.vue"
+import LoginGenshin from "./pages/LoginGenshin.vue"
 
 import Debug from "./components/Debug.vue"
 
 const routes = [
-  { path: '/login', component: Login },
+  { path: '/login', component: LoginGenshin },
   { path: '/statistics', component: Statistics },
   { path: '/data_table', component: DataTable },
   {

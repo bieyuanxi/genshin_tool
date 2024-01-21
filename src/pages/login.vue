@@ -64,7 +64,7 @@ async function queryStatus() {
     const retcode = data.retcode;
     switch (retcode) {
         case 0:
-            process_query(data.data);
+            process_query(data.data, raw_header);
             break;
         case -3001:
             console.log("Lack of request header params");
@@ -83,7 +83,7 @@ async function queryStatus() {
     }
 }
 
-function process_query(data) {
+function process_query(data, raw_header) {
     switch (data.status) {
         case "Created":
             break;
@@ -91,6 +91,7 @@ function process_query(data) {
             break;
         case "Confirmed":
             clearInterval(intervalId.value);
+            console.log(raw_header)
             break;
         default:
             console.log("got unknown queryQRLoginStatus!");

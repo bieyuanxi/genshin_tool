@@ -1,0 +1,4 @@
+GET https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket
+?token_types=1
+&login_ticket=oCqbXA7ytnbPkpjUgJWuvqXMNaLp4JsaO5miohpO
+&uid=76643296
