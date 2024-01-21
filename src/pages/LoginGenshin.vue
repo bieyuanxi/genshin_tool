@@ -7,7 +7,7 @@
         query
     </n-button>
 
-    <n-button type="info" @click="genAuthKeyB({ SToken })">
+    <n-button type="info" @click="genAuthKeyB({ stoken })">
         genAuthKeyB
     </n-button>
 
@@ -26,7 +26,8 @@ import { createGenshinQRLogin, queryGenshinQRLoginStatus, getTokenByGameToken, g
 const qr_text = ref("");
 const ticket = ref("");
 const status = ref("");
-const SToken = ref("");
+const stoken = ref("");
+const mid = ref("");
 const authkey = ref("");
 const intervalId = ref(null);
 
@@ -90,9 +91,10 @@ async function process_query(data) {
             const obj = JSON.parse(data.payload.raw);   //{uid, token}
 
             let resp = await getTokenByGameToken({ account_id: obj.uid, game_token: obj.token });
-            SToken.value = resp.data.token.token;
+            stoken.value = resp.data.token.token;
+            mid.value = resp.data.user_info.mid;
 
-            resp = await genAuthKeyB({ stoken: SToken.value });
+            resp = await genAuthKeyB({ stoken: stoken.value, mid: mid.value });
             if (resp.retcode != 0){
                 //TODO
             }
