@@ -1,24 +1,27 @@
 <template>
-    <n-space vertical>
-        <n-layout has-sider style="height: 100vh; width: 100vw;">
-            <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
-                show-trigger @collapse="collapsed = true" @expand="collapsed = false">
-                <n-menu v-model:value="activeKey" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
-                    :options="menuOptions" />
-            </n-layout-sider>
-            <!-- <n-switch v-model:value="collapsed" /> -->
-            <n-layout  content-style="padding: 12px;">
-                <span>{{ activeKey }}</span>
-                <router-view></router-view>
+    <n-config-provider :theme="lightTheme">
+        <n-space vertical>
+            <n-layout has-sider style="height: 100vh; width: 100vw;">
+                <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
+                    show-trigger @collapse="collapsed = true" @expand="collapsed = false">
+                    <n-menu v-model:value="activeKey" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
+                        :options="menuOptions" />
+                </n-layout-sider>
+                <!-- <n-switch v-model:value="collapsed" /> -->
+                <n-layout content-style="padding: 12px;">
+                    <span>{{ activeKey }}</span>
+                    <router-view></router-view>
+                </n-layout>
             </n-layout>
-        </n-layout>
-    </n-space>
+        </n-space>
+    </n-config-provider>
 </template>
   
 <script setup>
 import { h, ref } from "vue";
 import { RouterLink } from "vue-router";
-import { NIcon, NLayout, NLayoutSider, NSpace, NSwitch, NMenu } from "naive-ui";
+import { NIcon, NLayout, NLayoutSider, NSpace, NConfigProvider, NMenu } from "naive-ui";
+import { darkTheme, lightTheme } from 'naive-ui'
 import {
     BookOutline as BookIcon,
     PersonOutline as PersonIcon,
@@ -51,7 +54,7 @@ const collapsed = ref(true);
 router.push("/" + activeKey.value);
 
 const menuOptions = [
-{
+    {
         label: routerLink("/login", "Login"),
         key: "login",
         disabled: false,
