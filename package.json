@@ -12,7 +12,6 @@
   "dependencies": {
     "@tauri-apps/api": "^1.5.1",
     "echarts": "^5.4.3",
-    "md5": "^2.3.0",
     "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#v1",
     "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v1",
     "vue": "^3.3.4",
@@ -21,8 +20,10 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.6",
+    "@types/md5": "^2.3.5",
     "@vicons/ionicons5": "^0.12.0",
     "@vitejs/plugin-vue": "^4.2.3",
+    "md5": "^2.3.0",
     "naive-ui": "^2.37.0",
     "unplugin-auto-import": "^0.17.3",
     "unplugin-vue-components": "^0.26.0",
