@@ -22,11 +22,14 @@
 
 <script setup>
 import { onActivated, onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
+import { trace, warn, error, info } from "tauri-plugin-log-api"
 import { createGenshinQRLogin, queryGenshinQRLoginStatus, getTokenByGameToken, genAuthKeyB } from "../mihoyo_api"
 
 const qr_text = ref("");
 const ticket = ref("");
 const status = ref("");
+const game_uid = ref("100309696")
+const region = ref("cn_gf01")
 const stoken = ref("");
 const mid = ref("");
 const authkey = ref("");
@@ -46,38 +49,40 @@ onBeforeUnmount(() => {
     clearInterval(intervalId.value);
 })
 
+function startQueryStatus() {
+    if (!intervalId.value) intervalId.value = setInterval(queryStatus, 1000);
+}
 
-function errInternetConnection(reason) {
+function stopQueryStatus() {
+    if (intervalId.value) clearInterval(intervalId.value);
+}
+
+
+async function errInternetConnection(reason) {
     msg.value = "Please check your internet connection"
-
-    console.log(msg.value)
-
-    if (intervalId.value) {
-        clearInterval(intervalId.value);
-    }
+    warn("internet connection failed")
+    stopQueryStatus()
 }
 
 async function refresh() {
-    if (intervalId.value) {
-        clearInterval(intervalId.value);
-    }
+    stopQueryStatus()
 
-    await createGenshinQRLogin().then((val) => {
-        const retcode = val.retcode;
+    await createGenshinQRLogin().then((resp) => {
+        const retcode = resp.retcode;
         switch (retcode) {
             case 0:
-                qr_text.value = val.data.url;
+                qr_text.value = resp.data.url;
 
                 const url = new URL(qr_text.value);
                 ticket.value = url.searchParams.get("ticket");
 
-                intervalId.value = setInterval(queryStatus, 1000);  // query QR status
+                startQueryStatus();  // query QR status
                 break;
             default:
-                console.log(val)    // create QRcode api fail
+                error(`createGenshinQRLogin: unknown retcode ${JSON.stringify(resp)}`)    // create QRcode api fail
                 break;
         }
-    }).catch((reason) => errInternetConnection(reason));
+    }).catch(async (reason) => await errInternetConnection(reason));
 
 }
 
@@ -90,41 +95,66 @@ async function queryStatus() {
                 case 0:
                     await process_query(resp.data);
                     break;
+                case -106:  //expired code
+                    info("queryGenshinQRLoginStatus: expired code")
+                    break;
                 default:    // api fail
-                    console.log(`error unknown retcode: ${data.message}`);
+                    error(`queryGenshinQRLoginStatus: unknown retcode ${JSON.stringify(data)}`)
+                // console.log(`queryGenshinQRLoginStatus: unknown retcode ${JSON.stringify(data)}`);
             }
-            // console.log(resp)
-        }).catch((reason) => errInternetConnection(reason));
+            if (0 != retcode) stopQueryStatus()
+
+        }).catch(async (reason) => await errInternetConnection(reason));
 }
 
 async function process_query(data) {
-    status.value = data.stat;
+    status.value = data.stat;   //data has a key named `stat`
     switch (data.stat) {
         case "Init":
             break;
         case "Scanned":
             break;
         case "Confirmed":
-            clearInterval(intervalId.value);
+            stopQueryStatus();
+
+            // get uid & game_token
             const obj = JSON.parse(data.payload.raw);   //{uid, token}
 
-            // got uid & game_token
+            //TODO: remove these code to seperate function
+            await getTokenByGameToken({
+                account_id: obj.uid,
+                game_token: obj.token
+            }).then((resp) => {
+                switch (resp.retcode) {
+                    case 0:
+                        stoken.value = resp.data.token.token;
+                        mid.value = resp.data.user_info.mid;
+                        break;
+                    default:
+                        error(`getTokenByGameToken: unknown retcode ${JSON.stringify(resp)}`)
+                }
+
+            }).catch(async (reason) => await errInternetConnection(reason));   // get stoken
 
             //TODO: remove these code to seperate function
-            let resp = await getTokenByGameToken({ account_id: obj.uid, game_token: obj.token });   // get stoken
-            //TODO: error handle
-            stoken.value = resp.data.token.token;
-            mid.value = resp.data.user_info.mid;
+            await genAuthKeyB({
+                game_uid: game_uid.value,
+                region: region.value,
+                stoken: stoken.value,
+                mid: mid.value
+            }).then((resp) => {
+                switch (resp.retcode) {
+                    case 0:
+                        authkey.value = resp.data.authkey;  // Take authkeyB to query gacha log
+                        break;
+                    default:
+                        error(`genAuthKeyB: unknown retcode ${JSON.stringify(resp)}`)
+                }
+            }).catch(async (reason) => await errInternetConnection(reason)); // get authkeyB
 
-            resp = await genAuthKeyB({ stoken: stoken.value, mid: mid.value }); // get authkeyB
-            if (resp.retcode != 0) {
-                //TODO:error handle
-            }
-            authkey.value = resp.data.authkey;  // Take authkeyB to query gacha log
-
-            break;
+            break;  //Hey I'm a BREAK! 
         default:
-            console.log("got unknown queryStatus!");
+            error(`process_query: unknown stat ${JSON.stringify(data)}`)
     }
 
 

@@ -95,7 +95,7 @@ export async function getTokenByGameToken({ account_id, game_token }) {
     return resp.data;
 }
 
-export async function genAuthKeyB({ game_uid = "100309696", region = "cn_gf01", stoken = "", mid = "" }) {
+export async function genAuthKeyB({ game_uid = "", region = "cn_gf01", stoken = "", mid = "" }) {
     const url = `https://api-takumi.miyoushe.com/binding/api/genAuthKey`;
     const resp = await fetch(url, {
         method: "POST",

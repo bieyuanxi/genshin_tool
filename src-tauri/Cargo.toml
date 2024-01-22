@@ -17,11 +17,17 @@ tauri = { version = "1.5", features = [ "fs-all", "shell-open", "http-request"] 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 fast_qr = "0.11.0"
+log = "0.4.20"
+
 
 [dependencies.tauri-plugin-sql]
 git = "https://githubfast.com/tauri-apps/plugins-workspace"
 branch = "v1"
 features = ["sqlite"]
+
+[dependencies.tauri-plugin-log]
+git = "https://githubfast.com/tauri-apps/plugins-workspace"
+branch = "v1"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

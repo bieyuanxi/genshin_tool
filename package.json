@@ -13,6 +13,7 @@
     "@tauri-apps/api": "^1.5.1",
     "echarts": "^5.4.3",
     "md5": "^2.3.0",
+    "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#v1",
     "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v1",
     "vue": "^3.3.4",
     "vue-echarts": "^6.6.8",
