@@ -102,17 +102,17 @@ async function refresh() {
 async function queryStatus() {
     await queryGenshinQRLoginStatus(ticket.value)
         .then(async (resp) => {
+            const fn = "queryGenshinQRLoginStatus";
             const retcode = resp.retcode;
             switch (retcode) {
                 case 0:
                     await process_query(resp.data);
                     break;
                 case -106:  //expired code
-                    info("queryGenshinQRLoginStatus: expired code")
+                    info(`${fn}: expired code`)
                     break;
                 default:    // api fail
-                    error(`queryGenshinQRLoginStatus: unknown retcode ${JSON.stringify(data)}`)
-                // console.log(`queryGenshinQRLoginStatus: unknown retcode ${JSON.stringify(data)}`);
+                    error(`${fn}: unknown retcode ${JSON.stringify(data)}`)
             }
             if (0 != retcode) stopQueryStatus()
 
@@ -146,13 +146,14 @@ async function getSToken(account_id, game_token) {
         account_id,
         game_token
     }).then((resp) => {
+        const fn = "getTokenByGameToken";
         switch (resp.retcode) {
             case 0:
                 stoken.value = resp.data.token.token;
                 mid.value = resp.data.user_info.mid;
                 break;
             default:
-                error(`getTokenByGameToken: unknown retcode ${JSON.stringify(resp)}`)
+                error(`${fn}: ${JSON.stringify(resp)}`)
         }
     }).catch(async (reason) => await errInternetConnection(reason));   // get stoken
 }
@@ -165,12 +166,13 @@ async function getGachaAuthkey() {
         stoken: stoken.value,
         mid: mid.value
     }).then((resp) => {
+        const fn = "genAuthKeyB";
         switch (resp.retcode) {
             case 0:
                 authkey.value = resp.data.authkey;  // Take authkeyB to query gacha log
                 break;
             default:
-                error(`genAuthKeyB: unknown retcode ${JSON.stringify(resp)}`)
+                error(`${fn}: ${JSON.stringify(resp)}`)
         }
     }).catch(async (reason) => await errInternetConnection(reason)); // get authkeyB
 }
