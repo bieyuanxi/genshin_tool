@@ -61,6 +61,12 @@ const menuOptions = [
         icon: renderIcon(PersonIcon)
     },
     {
+        label: routerLink("/home", "Home"),
+        key: "home",
+        disabled: false,
+        icon: renderIcon(HomeIcon)
+    },
+    {
         label: routerLink("/statistics", "Statistics"),
         key: "statistics",
         disabled: false,

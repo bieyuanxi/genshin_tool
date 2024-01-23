@@ -32,6 +32,7 @@
 import { onActivated, onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
 import { trace, warn, error, info } from "tauri-plugin-log-api"
 import { createGenshinQRLogin, queryGenshinQRLoginStatus, getTokenByGameToken, genAuthKeyB, getUserGameRolesByStoken } from "../mihoyo_api"
+import { user } from "../store";
 
 const qr_text = ref("");
 const ticket = ref("");
@@ -139,6 +140,9 @@ async function process_query(data) {
             account_id.value = obj.uid;
             game_token.value = obj.token;
 
+            user.account_id = account_id.value;
+            user.updateGameToken(game_token.value)
+
             break;  //Hey I'm a BREAK! 
         default:
             error(`process_query: unknown stat ${JSON.stringify(data)}`)
@@ -157,6 +161,9 @@ async function getSToken(account_id, game_token) {
             case 0:
                 stoken.value = resp.data.token.token;
                 mid.value = resp.data.user_info.mid;
+
+                user.updateSToken(stoken.value);
+                user.mid = mid.value;
                 break;
             default:
                 error(`${fn}: ${JSON.stringify(resp)}`)
@@ -165,7 +172,6 @@ async function getSToken(account_id, game_token) {
 }
 
 async function getGachaAuthkey() {
-    //TODO: remove these code to seperate function
     await genAuthKeyB({
         game_uid: game_uid.value,
         region: region.value,
@@ -176,6 +182,8 @@ async function getGachaAuthkey() {
         switch (resp.retcode) {
             case 0:
                 authkey.value = resp.data.authkey;  // Take authkeyB to query gacha log
+
+                user.updateAuthkeyB(authkey.value);
                 break;
             default:
                 error(`${fn}: ${JSON.stringify(resp)}`)
@@ -190,8 +198,25 @@ async function getUserGameRoles() {
     }).then((resp) => {
         const info = resp.data.list[0]; // only use first one
         // user_info = info;
+        /*
+        game_biz: "hk4e_cn"
+        game_uid: "***"
+        is_chosen: false
+        is_official: true
+        level: 60
+        nickname: "Terra"
+        region: "cn_gf01"
+        region_name: "天空岛"
+        */
         game_uid.value = info.game_uid;
         region.value = info.region;
+
+        user.game_biz = info.game_biz;
+        user.level = info.level;
+        user.nickname = info.nickname;
+        user.game_uid = info.game_uid;
+        user.region = info.region;
+        user.region_name = info.region_name;
 
         console.log(info)
     }).catch(async (reason) => await err_handle(reason));

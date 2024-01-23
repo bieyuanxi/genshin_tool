@@ -287,7 +287,7 @@ async function create_table() {
     let db = await Database.load("sqlite:test.db");
     let ret = await db.execute(
         `CREATE TABLE IF NOT EXISTS gacha_log(
-        id          INT PRIMARY KEY     NOT NULL,
+        id          TEXT PRIMARY KEY     NOT NULL,
         uid         TEXT    NOT NULL,
         gacha_type  TEXT    NOT NULL,
         item_id     TEXT    NOT NULL,
