@@ -1,0 +1,6 @@
+POST https://hk4e-sdk.mihoyo.com/hk4e_cn/combo/panda/qrcode/fetch
+
+{
+    "app_id": "4",
+    "device": "device_id",
+}

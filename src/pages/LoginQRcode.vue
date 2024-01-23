@@ -66,7 +66,8 @@ onBeforeUnmount(() => {
 })
 
 function startQueryStatus() {
-    if (!intervalId.value) intervalId.value = setInterval(queryStatus, 1000);
+    stopQueryStatus()
+    intervalId.value = setInterval(queryStatus, 1000);
 }
 
 function stopQueryStatus() {
@@ -74,14 +75,15 @@ function stopQueryStatus() {
 }
 
 
-async function errInternetConnection(reason) {
+async function err_handle(reason) {
     msg.value = "Please check your internet connection"
-    warn("internet connection failed")
+    warn(JSON.stringify(reason))
     stopQueryStatus()
 }
 
 async function refresh() {
     stopQueryStatus()
+    msg.value = "";
 
     await createGenshinQRLogin().then((resp) => {
         const retcode = resp.retcode;
@@ -98,7 +100,7 @@ async function refresh() {
                 error(`createGenshinQRLogin: unknown retcode ${JSON.stringify(resp)}`)    // create QRcode api fail
                 break;
         }
-    }).catch(async (reason) => await errInternetConnection(reason));
+    }).catch(async (reason) => await err_handle(reason));
 
 }
 
@@ -120,7 +122,7 @@ async function queryStatus() {
             }
             if (0 != retcode) stopQueryStatus()
 
-        }).catch(async (reason) => await errInternetConnection(reason));
+        }).catch(async (reason) => await err_handle(reason));
 }
 
 async function process_query(data) {
@@ -159,7 +161,7 @@ async function getSToken(account_id, game_token) {
             default:
                 error(`${fn}: ${JSON.stringify(resp)}`)
         }
-    }).catch(async (reason) => await errInternetConnection(reason));   // get stoken
+    }).catch(async (reason) => await err_handle(reason));   // get stoken
 }
 
 async function getGachaAuthkey() {
@@ -178,7 +180,7 @@ async function getGachaAuthkey() {
             default:
                 error(`${fn}: ${JSON.stringify(resp)}`)
         }
-    }).catch(async (reason) => await errInternetConnection(reason)); // get authkeyB
+    }).catch(async (reason) => await err_handle(reason)); // get authkeyB
 }
 
 async function getUserGameRoles() {
@@ -192,7 +194,7 @@ async function getUserGameRoles() {
         region.value = info.region;
 
         console.log(info)
-    }).catch(async (reason) => await errInternetConnection(reason));
+    }).catch(async (reason) => await err_handle(reason));
 }
 
 </script>
