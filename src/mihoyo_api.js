@@ -9,8 +9,16 @@ const device_id = "flyme2genshin";
 
 //中国版米游社salt
 //https://githubfast.com/UIGF-org/mihoyo-api-collect/issues/1
-const LK2_salt = "9ttJY72HxbjwWRNHJvn0n2AYue47nYsK";    //mys v2.63.1
 const mys_ver = "2.63.1";
+const salt_LK2 = "9ttJY72HxbjwWRNHJvn0n2AYue47nYsK";    //mys v2.63.1
+const salt_K2 = "BIPaooxbWZW02fGHZL1If26mYCljPgst";
+
+const x_rpc_client_type = Object.freeze({
+    IOS: "1",
+    Android: "2",
+    Web: "4",
+    Other: "5",
+});
 
 export async function createQRLogin() {
     const url = `${mysPassportDomain}/account/ma-cn-passport/web/createQRLogin`;
@@ -102,8 +110,8 @@ export async function genAuthKeyB({ game_uid = "", region = "cn_gf01", stoken = 
     const resp = await fetch(url, {
         method: "POST",
         headers: {
-            "x-rpc-client_type": "5",
-            "DS": genDS1(LK2_salt),
+            "x-rpc-client_type": x_rpc_client_type.Other,
+            "DS": genDS1(salt_LK2),
             "x-rpc-app_version": mys_ver,
             "X-Requested-With": "com.mihoyo.hyperion",
 
@@ -121,6 +129,29 @@ export async function genAuthKeyB({ game_uid = "", region = "cn_gf01", stoken = 
 
     return resp.data;
 }
+
+export async function getUserGameRolesByStoken({ stoken = "", mid = "" }) {
+    const url = `https://api-takumi.miyoushe.com/binding/api/getUserGameRolesByStoken`;
+    const resp = await fetch(url, {
+        method: "GET",
+        headers: {
+            "x-rpc-client_type": x_rpc_client_type.Android,
+            "DS": genDS1(salt_K2),
+            "x-rpc-app_version": mys_ver,
+            "X-Requested-With": "com.mihoyo.hyperion",
+
+            "Cookie": `stoken=${stoken};mid=${mid}`,
+        },
+        query: {
+            game_biz: "hk4e_cn",    //genshin
+        },
+        responseType: ResponseType.JSON
+    });
+    // console.log(resp.data)
+
+    return resp.data;
+}
+
 
 function genDS1(salt) {
     const lettersAndNumbers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

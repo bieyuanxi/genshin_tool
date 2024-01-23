@@ -11,6 +11,10 @@
         getSToken
     </n-button>
 
+    <n-button type="info" @click="getUserGameRoles">
+        getUserGameRolesByStoken
+    </n-button>
+
     <n-button type="info" @click="getGachaAuthkey">
         genAuthKeyB
     </n-button>
@@ -27,7 +31,7 @@
 <script setup>
 import { onActivated, onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
 import { trace, warn, error, info } from "tauri-plugin-log-api"
-import { createGenshinQRLogin, queryGenshinQRLoginStatus, getTokenByGameToken, genAuthKeyB } from "../mihoyo_api"
+import { createGenshinQRLogin, queryGenshinQRLoginStatus, getTokenByGameToken, genAuthKeyB, getUserGameRolesByStoken } from "../mihoyo_api"
 
 const qr_text = ref("");
 const ticket = ref("");
@@ -36,8 +40,8 @@ const qr_status = ref("");
 const intervalId = ref(null);
 const msg = ref("");
 
-const game_uid = ref("100309696")
-const region = ref("cn_gf01")
+const game_uid = ref("")
+const region = ref("")
 
 const account_id = ref("");
 const game_token = ref("");
@@ -47,7 +51,7 @@ const mid = ref("");
 
 const authkey = ref("");
 
-
+const user_info = reactive({});
 
 onMounted(() => {
     refresh();
@@ -175,6 +179,20 @@ async function getGachaAuthkey() {
                 error(`${fn}: ${JSON.stringify(resp)}`)
         }
     }).catch(async (reason) => await errInternetConnection(reason)); // get authkeyB
+}
+
+async function getUserGameRoles() {
+    await getUserGameRolesByStoken({
+        stoken: stoken.value,
+        mid: mid.value
+    }).then((resp) => {
+        const info = resp.data.list[0]; // only use first one
+        // user_info = info;
+        game_uid.value = info.game_uid;
+        region.value = info.region;
+
+        console.log(info)
+    }).catch(async (reason) => await errInternetConnection(reason));
 }
 
 </script>
