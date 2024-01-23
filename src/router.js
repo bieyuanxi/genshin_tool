@@ -1,15 +1,16 @@
 import { createRouter, createWebHashHistory } from "vue-router"
 
-import Chart from "./components/Chart.vue"
-import Setting from "./components/Setting.vue"
-import NotFound from "./components/NotFound.vue"
-import Statistics from "./components/Statistics.vue"
-import About from "./components/About.vue"
-import DataTable from "./components/DataTable.vue"
-import Login from "./pages/login.vue"
-import LoginQRcode from "./pages/LoginQRcode.vue"
+// 用动态导入代替静态导入,把不同路由对应的组件分割成不同的代码块
+const Chart = () => import("./components/Chart.vue")
+const Setting = () => import("./components/Setting.vue")
+const NotFound = () => import("./components/NotFound.vue")
+const Statistics = () => import("./components/Statistics.vue")
+const About = () => import("./components/About.vue")
+const DataTable = () => import("./components/DataTable.vue")
+const Login = () => import("./pages/login.vue")
+const LoginQRcode = () => import("./pages/LoginQRcode.vue")
 
-import Debug from "./components/Debug.vue"
+const Debug = () => import("./components/Debug.vue")
 
 const routes = [
   { path: '/login', component: LoginQRcode },

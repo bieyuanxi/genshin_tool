@@ -7,6 +7,8 @@ export const mysPassportDomain = "https://passport-api.miyoushe.com";
 const app_id = "bll8iq97cem8";
 const device_id = "flyme2genshin";
 
+//中国版米游社salt
+//https://githubfast.com/UIGF-org/mihoyo-api-collect/issues/1
 const LK2_salt = "9ttJY72HxbjwWRNHJvn0n2AYue47nYsK";    //mys v2.63.1
 const mys_ver = "2.63.1";
 
