@@ -1,24 +1,4 @@
 <template>
-    <!-- <n-button type="info" @click="refresh">
-        Refresh
-    </n-button> -->
-
-    <!-- <n-button type="info" @click="queryStatus">
-        query
-    </n-button> -->
-
-    <!-- <n-button type="info" @click="getSToken(account_id, game_token)">
-        getSToken
-    </n-button>
-
-    <n-button type="info" @click="getUserGameRoles">
-        getUserGameRolesByStoken
-    </n-button>
-
-    <n-button type="info" @click="getGachaAuthkey">
-        genAuthKeyB
-    </n-button> -->
-
     <n-flex vertical>
         <p style="text-align: center;">Login</p>
         <n-flex justify="center" size="large">
@@ -30,7 +10,6 @@
             <n-flex vertical v-if="login_by_QRCode">
                 <n-qr-code :value="qr_text" :size="240" @click="refresh" />
                 <p>{{ qr_status }}</p>
-                <!-- <n-input v-model:value="qr_text" :maxlength="60" type="text" /> -->
                 <p>{{ msg }}</p>
             </n-flex>
         </n-flex>
@@ -48,7 +27,7 @@ import { queryUserInfo, insertInto } from "../db"
 
 const list = ref([]);
 
-const emit = defineEmits(['ok', 'err'])
+// const emit = defineEmits(['ok', 'err'])
 
 const login_by_QRCode = ref(false);
 const qr_text = ref("");
@@ -60,8 +39,8 @@ const msg = ref("");
 
 
 onMounted(() => {
-    queryUserInfo()
-        .then((val) => list.value = val);    //
+    queryUserInfo() //once mounted, query user login info
+        .then((val) => list.value = val);
 });
 
 onActivated(() => {
@@ -72,9 +51,9 @@ onBeforeUnmount(() => {
     clearInterval(intervalId.value);
 })
 
-function startQueryStatus() {
+function startQueryStatus(delay = 1000) {
     stopQueryStatus()
-    intervalId.value = setInterval(queryStatus, 1000);
+    intervalId.value = setInterval(queryStatus, delay);
 }
 
 function stopQueryStatus() {
@@ -83,10 +62,8 @@ function stopQueryStatus() {
 
 
 async function err_handle(reason) {
-    // msg.value = "Please check your internet connection"
-    warn(JSON.stringify(reason))
-    // warn(reason)
-    console.log(reason)
+    warn(reason.toString())
+    console.log(reason.toString())
     stopQueryStatus()
 }
 
@@ -151,14 +128,15 @@ async function processQuery(data) {
             // get uid & game_token
             const obj = JSON.parse(data.payload.raw);   //{uid, token}
 
-            emit("ok", { account_id: obj.uid, game_token: obj.token });
+            // emit("ok", { account_id: obj.uid, game_token: obj.token });
 
             const user = {
                 account_id: obj.uid,
                 game_token: obj.token,
-                last_login: (Date.now() / 1000).toFixed(),    //seconds
+                login_time: (Date.now() / 1000).toFixed(),    //seconds
             }
             console.log(user)
+            //TODO: if user exists, just update game_token & login_time
             await insertInto("user", [user]);
 
             break;  //Hey I'm a BREAK! 

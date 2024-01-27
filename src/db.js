@@ -88,7 +88,7 @@ async function _create_tbl(db) {
             game_token  TEXT    NOT NULL,
             stoken      TEXT,
             authkeyB    TEXT,
-            last_login  INT     NOT NULL
+            login_time  INT     NOT NULL
         );`
     );
 }
