@@ -20,7 +20,7 @@ const sysConfigFile = "sys_config.json"
 
 export const GachaLogPath = "./"
 
-export const db_name = "sqlite:test.db"
+export const db_name = "sqlite:local_data.db"
 
 let _config = defaultSysConfig();
 

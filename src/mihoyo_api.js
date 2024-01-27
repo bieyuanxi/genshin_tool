@@ -153,6 +153,91 @@ export async function getUserGameRolesByStoken({ stoken = "", mid = "" }) {
 }
 
 
+export async function getSToken(account_id, game_token) {
+    const ret = {
+        stoken: "",
+        mid: "",
+    };
+
+    await getTokenByGameToken({
+        account_id,
+        game_token
+    }).then((resp) => {
+        const fn = "getTokenByGameToken";
+        switch (resp.retcode) {
+            case 0:
+                ret.stoken = resp.data.token.token;
+                ret.mid = resp.data.user_info.mid;
+
+                break;
+            default:
+                error(`${fn}: ${JSON.stringify(resp)}`)
+        }
+    });
+
+    return ret;
+}
+
+export async function getGachaAuthkey({
+    game_uid = "",
+    region = "region.value",
+    stoken = "",
+    mid = ""
+}) {
+    let authkey = "invaid authkeyB";
+    await genAuthKeyB({
+        game_uid,
+        region,
+        stoken,
+        mid
+    }).then((resp) => {
+        const fn = "genAuthKeyB";
+        switch (resp.retcode) {
+            case 0:
+                authkey = resp.data.authkey;  // Take authkeyB to query gacha log
+                break;
+            default:
+                error(`${fn}: ${JSON.stringify(resp)}`)
+        }
+    });
+
+    return authkey;
+}
+
+export async function getUserGameRoles(stoken, mid) {
+    let ret = {
+        game_uid: "",
+        region: "",
+        region_name: "",
+        game_biz: "",
+        level: "",
+        nickname: "",
+    };
+    await getUserGameRolesByStoken({
+        stoken,
+        mid
+    }).then((resp) => {
+        const info = resp.data.list[0]; // only use first one for current version
+        // user_info = info;
+        /*
+        game_biz: "hk4e_cn"
+        game_uid: "***"
+        is_chosen: false
+        is_official: true
+        level: 60
+        nickname: "Terra"
+        region: "cn_gf01"
+        region_name: "天空岛"
+        */
+        console.log(info)
+        ret = info;
+
+    });
+
+    return ret;
+}
+
+
 function genDS1(salt) {
     const lettersAndNumbers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
@@ -161,11 +246,11 @@ function genDS1(salt) {
     for (let i = 0; i < 6; i++) {
         r += lettersAndNumbers[Math.floor(Math.random() * lettersAndNumbers.length)]
     }
-    
+
     const main = `salt=${salt}&t=${t}&r=${r}`
     const ds = md5(main)
 
     const final = `${t},${r},${ds}`
-    
+
     return final;
 }

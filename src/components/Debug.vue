@@ -16,8 +16,8 @@
         <n-button type="warning" @click="router.replace('/chart')">
             Router
         </n-button>
-        <n-button type="error" @click="console.log(sys_config)">
-            Show Config
+        <n-button type="error" @click="ins">
+            ins
         </n-button>
     </n-flex>
 </template>
@@ -31,7 +31,7 @@ import Database from "tauri-plugin-sql-api"
 import router from "../router";
 import { readLog, requestGachaLog, getGaChaAuthKey } from "../genshin";
 import { sys_config, db_name } from "../config";
-import { insertInto, selectFrom } from "../db"
+import { insertInto, create_table } from "../db"
 async function write2db() {
     const data = [
         {
@@ -283,27 +283,31 @@ async function write2db() {
     });
 }
 
-async function create_table() {
-    let db = await Database.load("sqlite:test.db");
-    let ret = await db.execute(
-        `CREATE TABLE IF NOT EXISTS gacha_log(
-        id          TEXT PRIMARY KEY     NOT NULL,
-        uid         TEXT    NOT NULL,
-        gacha_type  TEXT    NOT NULL,
-        item_id     TEXT    NOT NULL,
-        count       TEXT    NOT NULL,
-        time        TEXT    NOT NULL,
-        name        TEXT    NOT NULL,
-        lang        TEXT    NOT NULL,
-        item_type   TEXT    NOT NULL,
-        rank_type   TEXT    NOT NULL
-        );`).then(null, (reason) => {
-            console.log(reason)
-        });
 
-    await db.close("sqlite:test.db");
-
-    write2db();
+/*
+        `CREATE TABLE IF NOT EXISTS user(
+            account_id  TEXT PRIMARY KEY NOT NULL,
+            mid         TEXT    NOT NULL,
+            game_biz    TEXT    NOT NULL,
+            region      TEXT    NOT NULL,
+            region_name TEXT    NOT NULL,
+            game_uid    TEXT    NOT NULL,
+            nickname    TEXT    NOT NULL,
+            level       INT     NOT NULL,
+            game_token  TEXT    NOT NULL,
+            stoken      TEXT    NOT NULL,
+            authkeyB    TEXT    NOT NULL,
+            last_login  INT     NOT NULL
+        );`
+*/
+async function ins() {
+    const user = {
+        account_id: "account_id",
+        game_token: "game_token",
+        last_login: (Date.now() / 1000).toFixed(),    //seconds
+    }
+    await insertInto("user", [user]);
 }
+
 
 </script>

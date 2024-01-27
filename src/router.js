@@ -7,15 +7,14 @@ const NotFound = () => import("./components/NotFound.vue")
 const Statistics = () => import("./components/Statistics.vue")
 const About = () => import("./components/About.vue")
 const DataTable = () => import("./components/DataTable.vue")
-const Login = () => import("./pages/login.vue")
-const LoginQRcode = () => import("./pages/LoginQRcode.vue")
+const Login = () => import("./pages/Login.vue")
 const Home = () => import("./pages/Home.vue")
 
 const Debug = () => import("./components/Debug.vue")
 
 const routes = [
   { path: '/home', component: Home },
-  { path: '/login', component: LoginQRcode },
+  { path: '/login', component: Login },
   { path: '/statistics', component: Statistics },
   { path: '/data_table', component: DataTable },
   {
