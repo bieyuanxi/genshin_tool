@@ -20,6 +20,7 @@ const x_rpc_client_type = Object.freeze({
     Other: "5",
 });
 
+// unused now
 export async function createQRLogin() {
     const url = `${mysPassportDomain}/account/ma-cn-passport/web/createQRLogin`;
     const resp = await fetch(url, {
@@ -40,6 +41,7 @@ export async function createQRLogin() {
     };
 }
 
+// unused now
 export async function queryQRLoginStatus(ticket) {
     const url = `${mysPassportDomain}/account/ma-cn-passport/web/queryQRLoginStatus`;
     const resp = await fetch(url, {
@@ -57,7 +59,10 @@ export async function queryQRLoginStatus(ticket) {
     return resp;
 }
 
-
+/**
+ * Login genshin impact by mys QR code.
+ * @returns return url and ticket
+ */
 export async function createGenshinQRLogin() {
     const url = `https://hk4e-sdk.mihoyo.com/hk4e_cn/combo/panda/qrcode/fetch`;
     const resp = await fetch(url, {
@@ -72,6 +77,11 @@ export async function createGenshinQRLogin() {
     return resp.data;
 }
 
+/**
+ * Query QR code status
+ * @param {*} ticket ticket from createGenshinQRLogin
+ * @returns uid(account_id) and token(game_token)
+ */
 export async function queryGenshinQRLoginStatus(ticket) {
     const url = `https://hk4e-sdk.mihoyo.com/hk4e_cn/combo/panda/qrcode/query`;
     const resp = await fetch(url, {
@@ -87,7 +97,11 @@ export async function queryGenshinQRLoginStatus(ticket) {
     return resp.data;
 }
 
-
+/**
+ * Get stoken using game token
+ * @param {*} param0 
+ * @returns stoken and mid(mihoyo_id)
+ */
 export async function getTokenByGameToken({ account_id, game_token }) {
     const url = `https://api-takumi.mihoyo.com/account/ma-cn-session/app/getTokenByGameToken`;
     const resp = await fetch(url, {
@@ -105,6 +119,11 @@ export async function getTokenByGameToken({ account_id, game_token }) {
     return resp.data;
 }
 
+/**
+ * Get authkeyB, which will be used to get gacha data
+ * @param {*} param0 
+ * @returns authkeyB
+ */
 export async function genAuthKeyB({ game_uid = "", region = "cn_gf01", stoken = "", mid = "" }) {
     const url = `https://api-takumi.miyoushe.com/binding/api/genAuthKey`;
     const resp = await fetch(url, {
@@ -130,6 +149,11 @@ export async function genAuthKeyB({ game_uid = "", region = "cn_gf01", stoken = 
     return resp.data;
 }
 
+/**
+ * Get user game roles using stoken
+ * @param {*} param0 
+ * @returns All of the roles the account has
+ */
 export async function getUserGameRolesByStoken({ stoken = "", mid = "" }) {
     const url = `https://api-takumi.miyoushe.com/binding/api/getUserGameRolesByStoken`;
     const resp = await fetch(url, {

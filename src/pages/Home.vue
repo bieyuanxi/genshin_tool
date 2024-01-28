@@ -24,6 +24,13 @@ import { user } from "../store"
 import { requestGachaLog, writeGaChaLog } from "../genshin";
 import { db_name } from "../config"
 import { sleep } from "../utils";
+
+
+const props = defineProps({
+    id: String,
+})
+
+
 /*
 identifier=org.flyme2genshin.dev    //see tauri.conf.json: tauri.bundle.identifier
 on Linux:
