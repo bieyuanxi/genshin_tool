@@ -26,6 +26,10 @@ export const user = reactive({
     }
 })
 
-let db = await Database.load(db_name);
-let ret = await db.select("SELECT * FROM user ORDER BY login_time DESC LIMIT 1");
-console.log(Object.assign(user, ret[0]))
+new Promise(async () => {
+    let db = await Database.load(db_name);
+    let ret = await db.select("SELECT * FROM user ORDER BY login_time DESC LIMIT 1");
+    console.log(Object.assign(user, ret[0]))
+})
+
+

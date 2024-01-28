@@ -1,26 +1,22 @@
 <template>
-    <n-config-provider :theme="lightTheme">
-        <n-space vertical>
-            <n-layout has-sider style="height: 100vh; width: 100vw;">
-                <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
-                    show-trigger @collapse="collapsed = true" @expand="collapsed = false">
-                    <n-menu v-model:value="activeKey" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
-                        :options="menuOptions" />
-                </n-layout-sider>
-                <!-- <n-switch v-model:value="collapsed" /> -->
-                <n-layout content-style="padding: 12px;">
-                    <span>{{ activeKey }}</span>
-                    <router-view></router-view>
-                </n-layout>
+    <n-config-provider :theme="theme">
+        <n-layout has-sider style="height: 100vh; width: 100vw;">
+            <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
+                show-trigger @collapse="collapsed = true" @expand="collapsed = false">
+                <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions" />
+            </n-layout-sider>
+
+            <n-layout content-style="padding: 12px;">
+                <router-view></router-view>
             </n-layout>
-        </n-space>
+        </n-layout>
     </n-config-provider>
 </template>
   
 <script setup>
-import { h, onMounted, ref, watch } from "vue";
+import { h, onBeforeMount, ref, watch } from "vue";
 import { RouterLink, useRouter, useRoute } from "vue-router";
-import { NIcon, NLayout, NLayoutSider, NSpace, NConfigProvider, NMenu } from "naive-ui";
+import { NIcon, NLayout, NLayoutSider, NConfigProvider, NMenu } from "naive-ui";
 import { darkTheme, lightTheme } from 'naive-ui'
 import {
     BookOutline as BookIcon,
@@ -35,37 +31,26 @@ import {
 
 import { firstPage } from "./config"
 import { create_table } from "./db"
-
-function renderIcon(icon) {
-    return () => h(NIcon, null, { default: () => h(icon) });
-}
-
-function routerLink(to, name) {
-    return () => h(RouterLink,
-        { to: to },
-        { default: () => name }
-    );
-}
+// import { user } from "./store"
 
 const router = useRouter();
 const route = useRoute();
 
-const activeKey = ref('/');
+// const activeKey = ref('/');
 const collapsed = ref(true);
+const theme = ref(darkTheme);
 
 watch(() => route.path, async () => {
     console.log(route.path)
-    activeKey.value = route.path;
 })
 
+/*** before app mount ***/
+create_table();
+router.replace(firstPage);
 
-onMounted(async () => {
-    // app load success, first page
-    // await router.push(firstPage);
-    await create_table();
-})
-
-
+const importGlobal = () => import("./store");
+importGlobal();
+/*** end ***/
 
 const menuOptions = [
     {
@@ -112,7 +97,16 @@ const menuOptions = [
     },
 ];
 
+function renderIcon(icon) {
+    return () => h(NIcon, null, { default: () => h(icon) });
+}
 
+function routerLink(to, name) {
+    return () => h(RouterLink,
+        { to: to },
+        { default: () => name }
+    );
+}
 
 </script>
 

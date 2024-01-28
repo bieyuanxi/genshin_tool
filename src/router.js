@@ -4,6 +4,7 @@ import { createRouter, createWebHashHistory } from "vue-router"
 const Chart = () => import("./components/Chart.vue")
 const Setting = () => import("./components/Setting.vue")
 const NotFound = () => import("./components/NotFound.vue")
+const Forbidden = () => import("./components/Forbidden.vue")
 const Statistics = () => import("./components/Statistics.vue")
 const About = () => import("./components/About.vue")
 const DataTable = () => import("./components/DataTable.vue")
@@ -13,7 +14,7 @@ const Home = () => import("./pages/Home.vue")
 const Debug = () => import("./components/Debug.vue")
 
 const routes = [
-  { path: '/home/:id', component: Home, props: true },
+  { path: '/home/:id?', component: Home, props: true },
   { path: '/login', component: Login },
   { path: '/statistics', component: Statistics },
   { path: '/data_table', component: DataTable },

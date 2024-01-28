@@ -30,6 +30,7 @@ const props = defineProps({
     id: String,
 })
 
+console.log(`id: ${props.id}`)
 
 /*
 identifier=org.flyme2genshin.dev    //see tauri.conf.json: tauri.bundle.identifier
