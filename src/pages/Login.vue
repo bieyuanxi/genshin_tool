@@ -18,12 +18,15 @@
 
 <script setup>
 import { onActivated, onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { trace, warn, error, info } from "tauri-plugin-log-api"
 import { createGenshinQRLogin, queryGenshinQRLoginStatus, getTokenByGameToken, genAuthKeyB, getUserGameRolesByStoken } from "../mihoyo_api"
 import { user } from "../store";
 
 import UserList from '../components/UserList.vue';
 import { queryUserInfo, insertInto } from "../db"
+
+const router = useRouter();
 
 const list = ref([]);
 
@@ -138,6 +141,8 @@ async function processQuery(data) {
             console.log(user)
             //TODO: if user exists, just update game_token & login_time
             await insertInto("user", [user]);
+
+            router.push({ path: `home/${user.account_id}` });
 
             break;  //Hey I'm a BREAK! 
         default:

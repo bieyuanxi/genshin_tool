@@ -99,7 +99,7 @@ export async function queryUserInfo(game_uid = null){
     if(game_uid) {
         sql = `SELECT * FROM user WHERE game_uid='${game_uid}'`;
     }else {
-        sql = `SELECT * FROM user ORDER BY last_login DESC`;
+        sql = `SELECT * FROM user ORDER BY login_time DESC`;
     }
     return await db.select(sql);
 }

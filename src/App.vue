@@ -18,8 +18,8 @@
 </template>
   
 <script setup>
-import { h, ref } from "vue";
-import { RouterLink } from "vue-router";
+import { h, onMounted, ref, watch } from "vue";
+import { RouterLink, useRouter, useRoute } from "vue-router";
 import { NIcon, NLayout, NLayoutSider, NSpace, NConfigProvider, NMenu } from "naive-ui";
 import { darkTheme, lightTheme } from 'naive-ui'
 import {
@@ -33,8 +33,8 @@ import {
     PieChartOutline as PieChartIcon,
 } from "@vicons/ionicons5";
 
-import router from "./router"
 import { firstPage } from "./config"
+import { create_table } from "./db"
 
 function renderIcon(icon) {
     return () => h(NIcon, null, { default: () => h(icon) });
@@ -47,11 +47,25 @@ function routerLink(to, name) {
     );
 }
 
-const activeKey = ref(firstPage);
+const router = useRouter();
+const route = useRoute();
+
+const activeKey = ref('/');
 const collapsed = ref(true);
 
-// app load success, first page
-router.push("/" + activeKey.value);
+watch(() => route.path, async () => {
+    console.log(route.path)
+    activeKey.value = route.path;
+})
+
+
+onMounted(async () => {
+    // app load success, first page
+    // await router.push(firstPage);
+    await create_table();
+})
+
+
 
 const menuOptions = [
     {

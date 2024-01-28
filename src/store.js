@@ -1,4 +1,6 @@
 import { reactive } from 'vue'
+import Database from "tauri-plugin-sql-api";
+import { db_name } from "./config"
 
 export const user = reactive({
     game_biz: "hk4e_cn",
@@ -9,11 +11,9 @@ export const user = reactive({
     level: 60,
     mid: "",
     account_id: "",
-    auth: {
-        game_token: "",
-        stoken: "",
-        authkeyB: "",
-    },
+    game_token: "",
+    stoken: "",
+    authkeyB: "",
 
     updateGameToken(token) {
         this.auth.game_token = token
@@ -26,3 +26,6 @@ export const user = reactive({
     }
 })
 
+let db = await Database.load(db_name);
+let ret = await db.select("SELECT * FROM user ORDER BY login_time DESC LIMIT 1");
+console.log(Object.assign(user, ret[0]))
