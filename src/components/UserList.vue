@@ -1,7 +1,7 @@
 <template>
     <n-list hoverable clickable>
         <n-list-item v-for="one in list">
-            <n-thing :title=one.account_id content-style="margin-top: 10px;">
+            <n-thing :title=one.uid content-style="margin-top: 10px;">
                 <template #description v-if="one.game_uid == last_login_game_uid">
                     <n-flex size="small" style="margin-top: 4px">
                         <n-tag :bordered="false" type="info" size="small">

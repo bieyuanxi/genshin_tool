@@ -3,10 +3,12 @@ import { db_name } from "./config"
 import { error } from "tauri-plugin-log-api";
 import { info } from "tauri-plugin-log-api";
 
+let db = null;
+
 export async function insertInto(table = "", data = []) {
     if (data.length == 0) return null;
 
-    let db = await Database.load(db_name);
+    let db = await getDb(db_name);
     const keys = `(${Object.keys(data[0]).toString()})`;
     const vals = [];    //each one contains a sql VALUE
 
@@ -19,15 +21,13 @@ export async function insertInto(table = "", data = []) {
     }
 
     const sql = `INSERT into ${table} ${keys} VALUES ${vals.toString()}`;
-    const ret = await db.execute(sql).finally(async () => {
-        await db.close(db_name);
-    });
+    const ret = await db.execute(sql)
 
     return ret;
 }
 
 export async function selectFrom(column = ["*"], table = "", where = "", limit = 10, offset = 0) {
-    let db = await Database.load(db_name);
+    let db = await getDb(db_name);
     const keys = `${column.toString()}`;
     const vals = [];    //each one contains a sql VALUE
 
@@ -37,9 +37,7 @@ export async function selectFrom(column = ["*"], table = "", where = "", limit =
 
     const sql = `SELECT ${keys} FROM ${table} ${where} LIMIT ${limit} OFFSET ${offset}`;
     // console.log(sql)
-    const ret = await db.select(sql).finally(async () => {
-        await db.close(db_name);
-    });
+    const ret = await db.select(sql)
 
     // console.log(ret)
 
@@ -49,12 +47,10 @@ export async function selectFrom(column = ["*"], table = "", where = "", limit =
 export async function create_table() {
     const data_db = db_name;
 
-    let db = await Database.load(data_db);
+    let db = await getDb(db_name);
 
     await _create_tbl(db)
         .catch(create_tbl_err)
-        .finally(async () => await db.close(data_db));
-
 }
 
 async function _create_tbl(db) {
@@ -91,19 +87,21 @@ async function _create_tbl(db) {
             login_time  INT     NOT NULL
         );`
     );
+
+    // used to store user account info
+    await db.execute(
+        `CREATE TABLE IF NOT EXISTS users(
+            uid         TEXT PRIMARY KEY NOT NULL,
+            mid         TEXT,
+            game_token  TEXT,
+            login_time  INT     NOT NULL
+        );`
+    );
 }
 
-export async function queryUserInfo(game_uid = null){
-    let db = await Database.load(db_name);
-    let sql = "";
-    if(game_uid) {
-        sql = `SELECT * FROM user WHERE game_uid='${game_uid}'`;
-    }else {
-        sql = `SELECT * FROM user ORDER BY login_time DESC`;
-    }
-    return await db.select(sql);
+export async function getDb(name = db_name){
+    return await Database.load(name);
 }
-
 
 function create_tbl_err(reason) {
     console.log(reason)

@@ -20,11 +20,13 @@
 import { onActivated, onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { trace, warn, error, info } from "tauri-plugin-log-api"
-import { createGenshinQRLogin, queryGenshinQRLoginStatus, getTokenByGameToken, genAuthKeyB, getUserGameRolesByStoken } from "../mihoyo_api"
+import Database from "tauri-plugin-sql-api";
+import { db_name } from "../config"
+import { createGenshinQRLogin, queryGenshinQRLoginStatus, getSToken, getTokenByGameToken, genAuthKeyB, getUserGameRolesByStoken } from "../mihoyo_api"
 import { user } from "../store";
 
 import UserList from '../components/UserList.vue';
-import { queryUserInfo, insertInto } from "../db"
+import { getDb } from "../db"
 
 const router = useRouter();
 
@@ -40,15 +42,10 @@ const qr_status = ref("");
 const intervalId = ref(null);
 const msg = ref("");
 
-
-onMounted(() => {
-    queryUserInfo() //once mounted, query user login info
-        .then((val) => list.value = val);
-});
-
-onActivated(() => {
-
-});
+getDb().then(async (db) => {
+    let sql = `SELECT * FROM users ORDER BY login_time DESC`;
+    await db.select(sql).then((val) => list.value = val);
+})
 
 onBeforeUnmount(() => {
     clearInterval(intervalId.value);
@@ -129,20 +126,47 @@ async function processQuery(data) {
         case "Confirmed":
             stopQueryStatus();
             // get uid & game_token
+            const proto = data.payload.proto;
             const obj = JSON.parse(data.payload.raw);   //{uid, token}
+            console.log(obj)
+            let uid = "invalid_uid";
+            let game_token = "invalid_game_token";
 
-            // emit("ok", { account_id: obj.uid, game_token: obj.token });
+            switch (proto) {
+                case "Account": // mys
+                    // use mys: { uid, token, }
+                    uid = obj.uid;
+                    game_token = obj.token;
 
-            const user = {
-                account_id: obj.uid,
-                game_token: obj.token,
-                login_time: (Date.now() / 1000).toFixed(),    //seconds
+                    break;
+                case "Combo":   // genshin client & genshin cloud
+                    // use genshin client: { open_id, open_token, ... }
+                    // {
+                    //     account_type: 1
+                    //     app_id: 4
+                    //     asterisk_name: "187******51"
+                    //     channel_id: 1
+                    //     combo_id: 0
+                    //     combo_token: "***"
+                    //     device_id: "***"
+                    //     guest: false
+                    //     heartbeat: false
+                    //     open_id: "***"
+                    //     open_token: "***"
+                    // }
+                    uid = obj.open_id;
+                    game_token = obj.open_token;
+
+                    break;
+                default:
+                    error(`unknown proto ${proto}`)
+                    throw new Error(`unknown proto ${proto}`)
             }
-            console.log(user)
-            //TODO: if user exists, just update game_token & login_time
-            await insertInto("user", [user]);
 
-            router.push({ path: `home/${user.account_id}` });
+            // console.log(await getSToken(uid, game_token));
+            console.log(await updateUser({ uid, game_token }))
+
+            // router.push({ path: `home/${user.account_id}` });
 
             break;  //Hey I'm a BREAK! 
         default:
@@ -152,5 +176,12 @@ async function processQuery(data) {
 
 }
 
+async function updateUser({ uid, game_token }) {
+    const login_time = (Date.now() / 1000).toFixed();
+    const db = await getDb();
+    const sql = `REPLACE INTO users(uid, game_token, login_time) VALUES ('${uid}','${game_token}',${login_time})`;
+    console.log(sql)
+    return await db.execute(sql);
+}
 
 </script>
