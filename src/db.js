@@ -3,8 +3,6 @@ import { db_name } from "./config"
 import { error } from "tauri-plugin-log-api";
 import { info } from "tauri-plugin-log-api";
 
-let db = null;
-
 export async function insertInto(table = "", data = []) {
     if (data.length == 0) return null;
 
@@ -45,12 +43,9 @@ export async function selectFrom(column = ["*"], table = "", where = "", limit =
 }
 
 export async function create_table() {
-    const data_db = db_name;
-
     let db = await getDb(db_name);
 
-    await _create_tbl(db)
-        .catch(create_tbl_err)
+    await _create_tbl(db).catch(create_tbl_err);
 }
 
 async function _create_tbl(db) {
@@ -70,23 +65,23 @@ async function _create_tbl(db) {
         );`
     );
 
-    // used to store user login info
-    await db.execute(
-        `CREATE TABLE IF NOT EXISTS user(
-            account_id  TEXT PRIMARY KEY NOT NULL,
-            mid         TEXT,
-            game_biz    TEXT,
-            region      TEXT,
-            region_name TEXT,
-            game_uid    TEXT,
-            nickname    TEXT,
-            level       INT,
-            game_token  TEXT    NOT NULL,
-            stoken      TEXT,
-            authkeyB    TEXT,
-            login_time  INT     NOT NULL
-        );`
-    );
+    // // used to store user login info
+    // await db.execute(
+    //     `CREATE TABLE IF NOT EXISTS user(
+    //         account_id  TEXT PRIMARY KEY NOT NULL,
+    //         mid         TEXT,
+    //         game_biz    TEXT,
+    //         region      TEXT,
+    //         region_name TEXT,
+    //         game_uid    TEXT,
+    //         nickname    TEXT,
+    //         level       INT,
+    //         game_token  TEXT    NOT NULL,
+    //         stoken      TEXT,
+    //         authkeyB    TEXT,
+    //         login_time  INT     NOT NULL
+    //     );`
+    // );
 
     // used to store user account info
     await db.execute(
