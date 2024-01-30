@@ -1,6 +1,8 @@
-import { reactive } from 'vue'
-import Database from "tauri-plugin-sql-api";
-import { db_name } from "./config"
+import { reactive, watch, watchEffect, ref } from 'vue'
+import { getDb } from './db';
+import { getSToken } from './mihoyo_api';
+import { short } from './utils';
+import { info } from 'tauri-plugin-log-api';
 
 export const user = reactive({
     game_biz: "hk4e_cn",
@@ -10,26 +12,57 @@ export const user = reactive({
     nickname: "Terra",
     level: 60,
     mid: "",
-    account_id: "",
+    uid: "",
     game_token: "",
     stoken: "",
     authkeyB: "",
 
+    updateUID(uid, game_token) {
+        this.uid = uid;
+        this.game_token = game_token;
+    },
+
     updateGameToken(token) {
-        this.auth.game_token = token
+        this.game_token = token
     },
     updateSToken(token) {
-        this.auth.stoken = token
+        this.stoken = token
     },
     updateAuthkeyB(authkey) {
-        this.auth.authkeyB = authkey
+        this.authkeyB = authkey
     }
 })
 
-// new Promise(async () => {
-//     let db = await Database.load(db_name);
-//     let ret = await db.select("SELECT * FROM user ORDER BY login_time DESC LIMIT 1");
-//     console.log(Object.assign(user, ret[0]))
+watchEffect(async () => {
+    let db = await getDb();
+    let ret = await db.select("SELECT * FROM users ORDER BY login_time DESC LIMIT 1");
+    const row = ret[0];
+
+    user.uid = row.uid;
+    user.game_token = row.game_token;
+
+    console.log(user)
+})
+
+watch(
+    () => user.uid,
+    async (newVal, oldVal) => {
+        const msg = `user: ${oldVal} -> ${newVal}`;
+        console.log(msg)
+        info(msg)
+    }
+)
+
+watch(
+    () => user.game_token,
+    async (newVal, oldVal) => {
+        const msg = `game_token: ${short(oldVal)} -> ${short(newVal)}`;
+        console.log(msg)
+        info(msg)
+    }
+)
+
+// watch(async () => {
+//     let ret = await getSToken(user.uid, user.game_token);
+//     console.log(ret)
 // })
-
-

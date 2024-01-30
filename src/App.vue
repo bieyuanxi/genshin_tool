@@ -31,7 +31,7 @@ import {
 
 import { firstPage } from "./config"
 import { create_table } from "./db"
-// import { user } from "./store"
+import { user } from "./store"
 
 const router = useRouter();
 const route = useRoute();

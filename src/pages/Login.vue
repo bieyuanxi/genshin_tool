@@ -164,8 +164,9 @@ async function processQuery(data) {
             }
 
             // console.log(await getSToken(uid, game_token));
-            console.log(await updateUser({ uid, game_token }))
-
+            console.log(await sqlUpdateUser({ uid, game_token }))
+            
+            user.updateUID(uid, game_token);
             // router.push({ path: `home/${user.account_id}` });
 
             break;  //Hey I'm a BREAK! 
@@ -176,7 +177,7 @@ async function processQuery(data) {
 
 }
 
-async function updateUser({ uid, game_token }) {
+async function sqlUpdateUser({ uid, game_token }) {
     const login_time = (Date.now() / 1000).toFixed();
     const db = await getDb();
     const sql = `REPLACE INTO users(uid, game_token, login_time) VALUES ('${uid}','${game_token}',${login_time})`;
