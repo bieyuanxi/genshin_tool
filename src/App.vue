@@ -14,7 +14,7 @@
 </template>
   
 <script setup>
-import { h, onBeforeMount, ref, watch } from "vue";
+import { computed, h, onBeforeMount, ref, watch, watchEffect } from "vue";
 import { RouterLink, useRouter, useRoute } from "vue-router";
 import { NIcon, NLayout, NLayoutSider, NConfigProvider, NMenu } from "naive-ui";
 import { darkTheme, lightTheme } from 'naive-ui'
@@ -36,7 +36,6 @@ import { user } from "./store"
 const router = useRouter();
 const route = useRoute();
 
-// const activeKey = ref('/');
 const collapsed = ref(true);
 const theme = ref(darkTheme);
 
@@ -47,12 +46,11 @@ watch(() => route.path, async () => {
 /*** before app mount ***/
 create_table();
 router.replace(firstPage);
-
-const importGlobal = () => import("./store");
-importGlobal();
 /*** end ***/
 
-const menuOptions = [
+const homePath = computed(() => `/home/${user.uid}`)
+
+const menuOptions = ref([
     {
         label: routerLink("/login", "Login"),
         key: "login",
@@ -60,7 +58,7 @@ const menuOptions = [
         icon: renderIcon(PersonIcon)
     },
     {
-        label: routerLink("/home", "Home"),
+        label: routerLink(homePath, "Home"),
         key: "home",
         disabled: false,
         icon: renderIcon(HomeIcon)
@@ -95,7 +93,7 @@ const menuOptions = [
         disabled: false,
         icon: renderIcon(BugIon)
     },
-];
+]);
 
 function renderIcon(icon) {
     return () => h(NIcon, null, { default: () => h(icon) });

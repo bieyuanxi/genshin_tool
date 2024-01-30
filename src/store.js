@@ -36,10 +36,12 @@ export const user = reactive({
 watchEffect(async () => {
     let db = await getDb();
     let ret = await db.select("SELECT * FROM users ORDER BY login_time DESC LIMIT 1");
-    const row = ret[0];
+    if( ret.length > 0) {
+        const row = ret[0];
 
-    user.uid = row.uid;
-    user.game_token = row.game_token;
+        user.uid = row.uid;
+        user.game_token = row.game_token;
+    }
 
     console.log(user)
 })
