@@ -7,7 +7,7 @@ const NotFound = () => import("./components/NotFound.vue")
 const Forbidden = () => import("./components/Forbidden.vue")
 const Statistics = () => import("./components/Statistics.vue")
 const About = () => import("./components/About.vue")
-const DataTable = () => import("./components/DataTable.vue")
+const DataTable = () => import("./pages/DataTable.vue")
 const Login = () => import("./pages/Login.vue")
 const Home = () => import("./pages/Home.vue")
 
