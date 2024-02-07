@@ -3,14 +3,14 @@ import { db_name } from "./config"
 import { error } from "tauri-plugin-log-api";
 import { info } from "tauri-plugin-log-api";
 
-export async function insertInto(table = "", data = []) {
-    if (data.length == 0) return null;
+export function key2sql(list = []) {
+    // FIX ME: error handle when list is empty
+    return `(${Object.keys(list[0]).toString()})`;
+}
 
-    let db = await getDb(db_name);
-    const keys = `(${Object.keys(data[0]).toString()})`;
+export function val2sql(list = []) {
     const vals = [];    //each one contains a sql VALUE
-
-    for (const row of data) {
+    for (const row of list) {
         let arr = Object.values(row);
         arr.forEach((val, i, array) => {
             array[i] = `'${val}'`;
@@ -18,7 +18,17 @@ export async function insertInto(table = "", data = []) {
         vals.push(`(${arr.toString()})`)
     }
 
-    const sql = `INSERT into ${table} ${keys} VALUES ${vals.toString()}`;
+    return vals.toString();
+}
+
+export async function insertInto(table = "", list = []) {
+    if (list.length == 0) return null;
+
+    let db = await getDb(db_name);
+    const keys = key2sql(list);
+    const vals = val2sql(list);
+
+    const sql = `INSERT into ${table} ${keys} VALUES ${vals}`;
     const ret = await db.execute(sql)
 
     return ret;

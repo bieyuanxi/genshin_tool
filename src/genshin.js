@@ -11,14 +11,14 @@ export async function readLog() {
 }
 
 // get wish log from official web server
-export async function requestGachaLog({authKey, type = 301, endId = 0}) {
+export async function requestGachaLog({authKey, type = 301, endId = 0, size = 20}) {
     // let authKey = await getGaChaAuthKey();
 
     let url = new URL(`${apiDomain}/${apiPath}`);
     url.searchParams.set("authkey_ver", 1);
     url.searchParams.set("authkey", authKey);
     url.searchParams.set("gacha_type", type);
-    url.searchParams.set("size", 20);
+    url.searchParams.set("size", size);
     url.searchParams.set("end_id", endId);
     url.searchParams.set("lang", "zh-cn");
     // console.log(url.search)
@@ -77,6 +77,7 @@ async function getAuthKeyFromWebCache(file_path) {
     // console.log(await res.json())
 }
 
+// deprecated
 export async function writeGaChaLog(data = []) {
     const table = "gacha_log";
 

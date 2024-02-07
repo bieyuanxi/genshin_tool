@@ -229,19 +229,19 @@ export async function getGachaAuthkey({
 }
 
 export async function getUserGameRoles(stoken, mid) {
-    let ret = {
+    let ret = [{
         game_uid: "",
         region: "",
         region_name: "",
         game_biz: "",
         level: "",
         nickname: "",
-    };
+    }];
     await getUserGameRolesByStoken({
         stoken,
         mid
     }).then((resp) => {
-        const info = resp.data.list[0]; // only use first one for current version
+        const role_list = resp.data.list; //a list
         // user_info = info;
         /*
         game_biz: "hk4e_cn"
@@ -253,8 +253,8 @@ export async function getUserGameRoles(stoken, mid) {
         region: "cn_gf01"
         region_name: "天空岛"
         */
-        console.log(info)
-        ret = info;
+        console.log(role_list)
+        ret = role_list;
 
     });
 

@@ -96,11 +96,11 @@ async function handleCreate(resp) {
 
 async function queryStatus() {
     await queryGenshinQRLoginStatus(ticket.value)
-        .then(async (resp) => await hanleQuery(resp))
+        .then(async (resp) => await handleQuery(resp))
         .catch(async (reason) => await err_handle(reason));
 }
 
-async function hanleQuery(resp) {
+async function handleQuery(resp) {
     const fn = "queryGenshinQRLoginStatus";
     const retcode = resp.retcode;
     switch (retcode) {

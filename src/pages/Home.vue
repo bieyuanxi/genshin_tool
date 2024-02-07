@@ -1,13 +1,5 @@
 <template>
-    <n-button type="info" @click="writeUserData">
-        writeUserData
-    </n-button>
-
-    <n-button type="info" @click="readUserData(`100309696`)">
-        readUserData
-    </n-button>
-
-    <n-button type="info" @click="getAllGachaLog">
+    <n-button type="info" @click="getGachaLog(user.game_uid)">
         Update Gacha Data
     </n-button>
     <pre>{{ JSON.stringify(user, null, 4) }}</pre>
@@ -17,13 +9,11 @@
 
 
 <script setup>
-import { BaseDirectory, exists, createDir, writeTextFile, readTextFile } from "@tauri-apps/api/fs"
-import Database from "tauri-plugin-sql-api";
-
+import { info, warn } from "tauri-plugin-log-api";
 import { user } from "../store"
-import { requestGachaLog, writeGaChaLog } from "../genshin";
-import { db_name } from "../config"
+import { requestGachaLog } from "../genshin";
 import { sleep } from "../utils";
+import { getDb, val2sql, key2sql } from "../db";
 
 
 const props = defineProps({
@@ -52,68 +42,45 @@ on Linux:
 On Windows:
     TODO
 */
-async function writeUserData() {
-    const path = `userdata/user_${user.game_uid}.json`
-    await createDir('userdata', { dir: BaseDirectory.AppData, recursive: true });
-    await writeTextFile(path, JSON.stringify(user, null, 4), { dir: BaseDirectory.AppData });
-}
 
-async function readUserData(game_uid) {
-    let ret = null;
-    const path = `userdata/user_${game_uid}.json`
-    if (await exists(path, { dir: BaseDirectory.AppData })) {
-        ret = JSON.parse(await readTextFile(path, { dir: BaseDirectory.AppData }));
-    }
+async function getGachaLog(game_id = "default_gid", type = "301") {
+    const size = 20;
+    let rowsInsert = 0;
 
-    user.account_id = ret.account_id
-    user.game_biz = ret.game_biz
-    user.game_uid = ret.game_uid
-    user.level = ret.level
-    user.mid = ret.mid
-    user.nickname = ret.nickname
-    user.region = ret.region
-    user.region_name = ret.region_name
+    for (let check = true, endId = "0"; check;) {
+        const ret = await requestGachaLog({ authKey: user.authkeyB, type, endId, size });
+        const resp = ret.data;
 
-    user.auth = ret.auth
-
-    console.log(ret)
-
-    return ret;
-}
-
-async function getAllGachaLog() {
-    const db = await Database.load(db_name);
-    const table = "gacha_log"
-    let type = "301"
-
-    const sql = `SELECT id FROM ${table} WHERE gacha_type=${type} ORDER BY id desc LIMIT 1`;
-
-    const ret = await db.select(sql).finally(async () => {
-        await db.close(db_name);
-    });
-
-    let end_id_in_db = (ret.length > 0) ? ret[0].id : 0
-
-    let list = [];
-    for (let end_id = "0"; "0" == end_id || (end_id > end_id_in_db); end_id = list[list.length - 1].id) {
-        if (end_id != "0") await sleep(1000);
-
-        let resp = await requestGachaLog({
-            authKey: user.auth.authkeyB,
-            type: type,
-            endId: end_id,
-        })
-        console.log(resp.data)
-        list = resp.data.data.list;
-
-
-        console.log(resp.data.data.list)
-
-        resp = await writeGaChaLog(list);
-        if (list.length < 20) {
+        if (0 == resp.retcode) {
+            const list = resp.data.list;
+            // console.log(resp.data)
+            if (list.length > 0) {
+                endId = list[list.length - 1].id;
+                const result = await merge(list);
+                rowsInsert += result.rowsAffected;
+                check = !(result.rowsAffected < size);
+            }
+        } else {    // api retcode error
+            console.log(resp);  warn(resp.message);
             break;
         }
+
+        if (check) await sleep(200);
     }
+    const msg = `in getGachaLog, total rows affected: ${rowsInsert}`
+    console.log(msg);  info(msg);
+}
+
+async function merge(list = []) {
+    const db = await getDb();
+
+    //TODO: turn gacha_type=400 to 301
+    const keys = key2sql(list);
+    const vals = val2sql(list);
+
+    const sql = `INSERT OR IGNORE INTO gacha_log ${keys} VALUES ${vals}`;
+    // console.log(sql)
+    return await db.execute(sql);
 }
 
 </script>
