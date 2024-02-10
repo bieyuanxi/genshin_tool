@@ -1,5 +1,11 @@
 <template>
     <n-flex vertical>
+        <n-flex>
+            <n-radio v-for="_type in gacha_type" :checked="checkedValueRef == _type" :value="_type" name="basic-demo"
+                @change="handleChange">
+                {{ _type }}
+            </n-radio>
+        </n-flex>
         <n-data-table flex-height :style="{ height: `90vh` }" remote ref="table" :columns="columnsRef" :data="dataRef"
             :loading="loadingRef" :pagination="paginationReactive" :row-key="rowKey" @update:sorter="handleSorterChange"
             @update:filters="handleFiltersChange" @update:page="handlePageChange" />
@@ -8,10 +14,27 @@
   
 <script setup>
 import { defineComponent, ref, reactive, onMounted } from 'vue'
-import { NDataTable, NFlex } from 'naive-ui';
+import { NDataTable, NFlex, NRadio } from 'naive-ui';
 
 import { selectFrom } from "../db";
+import { gacha_type } from '../mihoyo_api';
 
+const checkedValueRef = ref(gacha_type[0]); //TODO: actor wish
+
+function handleChange(e) {
+    checkedValueRef.value = e.target.value;
+    query(
+        paginationReactive.page,
+        paginationReactive.pageSize,
+        columnIdReactive.sortOrder,
+        columnRankTypeReactive.filterOptionValues
+    ).then((data) => {
+        dataRef.value = data.data
+        // paginationReactive.pageCount = data.pageCount
+        paginationReactive.itemCount = data.total
+        loadingRef.value = false
+    })
+}
 
 const column_id = {
     title: 'id',
@@ -63,12 +86,13 @@ const data = [];
 
 async function query(page, pageSize = 10, order = 'ascend', filterValues = []) {
     const offset = (page - 1) * pageSize;
-    const where = (filterValues.length == 0) ? "" : `rank_type IN (${filterValues.toString()})`;
+    let where = `gacha_type='${checkedValueRef.value}'`;
+    where = (filterValues.length == 0) ? where : `${where} AND rank_type IN (${filterValues.toString()})`;
 
     const total = await selectFrom("COUNT(*) as count", "gacha_log", where);
 
     const ret = await selectFrom(["*"], "gacha_log", where, pageSize, offset);
-    
+
     return {
         // pageCount: 1115,
         data: ret,
