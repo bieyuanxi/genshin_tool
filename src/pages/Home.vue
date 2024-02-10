@@ -46,17 +46,17 @@ On Windows:
 
 async function getAllGachaLog(){
     for (const type of gacha_type) {
-        await getGachaLog(user.game_uid, type);
+        await getGachaLog(user.authkeyB, type);
         await sleep(200);
     }
 }
 
-async function getGachaLog(game_id = "default_gid", type = "301") {
+async function getGachaLog(authKey = "invalid_authkey", type = "301") {
     const size = 20;
     let rowsInsert = 0;
 
     for (let check = true, endId = "0"; check;) {
-        const ret = await requestGachaLog({ authKey: user.authkeyB, type, endId, size });
+        const ret = await requestGachaLog({ authKey, type, endId, size });
         const resp = ret.data;
 
         if (0 == resp.retcode) {
