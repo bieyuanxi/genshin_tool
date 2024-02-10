@@ -20,6 +20,10 @@ const x_rpc_client_type = Object.freeze({
     Other: "5",
 });
 
+export const gacha_type = [
+    '100', '200', '301', '302'
+];
+
 // unused now
 export async function createQRLogin() {
     const url = `${mysPassportDomain}/account/ma-cn-passport/web/createQRLogin`;

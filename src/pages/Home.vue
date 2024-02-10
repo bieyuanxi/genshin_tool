@@ -1,5 +1,5 @@
 <template>
-    <n-button type="info" @click="getGachaLog(user.game_uid)">
+    <n-button type="info" @click="getAllGachaLog">
         Update Gacha Data
     </n-button>
     <pre>{{ JSON.stringify(user, null, 4) }}</pre>
@@ -12,6 +12,7 @@
 import { info, warn } from "tauri-plugin-log-api";
 import { user } from "../store"
 import { requestGachaLog } from "../genshin";
+import { gacha_type } from "../mihoyo_api";
 import { sleep } from "../utils";
 import { getDb, val2sql, key2sql } from "../db";
 
@@ -43,6 +44,13 @@ On Windows:
     TODO
 */
 
+async function getAllGachaLog(){
+    for (const type of gacha_type) {
+        await getGachaLog(user.game_uid, type);
+        await sleep(200);
+    }
+}
+
 async function getGachaLog(game_id = "default_gid", type = "301") {
     const size = 20;
     let rowsInsert = 0;
@@ -59,6 +67,8 @@ async function getGachaLog(game_id = "default_gid", type = "301") {
                 const result = await merge(list);
                 rowsInsert += result.rowsAffected;
                 check = !(result.rowsAffected < size);
+            }else{  // no data found from server
+                check = false;  //break
             }
         } else {    // api retcode error
             console.log(resp);  warn(resp.message);
@@ -67,7 +77,7 @@ async function getGachaLog(game_id = "default_gid", type = "301") {
 
         if (check) await sleep(200);
     }
-    const msg = `in getGachaLog, total rows affected: ${rowsInsert}`
+    const msg = `in getGachaLog, type=${type}, total rows affected: ${rowsInsert}`
     console.log(msg);  info(msg);
 }
 
