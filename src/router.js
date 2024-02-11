@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router"
 
 // 用动态导入代替静态导入,把不同路由对应的组件分割成不同的代码块
-const Chart = () => import("./components/Chart.vue")
+const ChartList = () => import("./pages/ChartList.vue")
 const Setting = () => import("./components/Setting.vue")
 const NotFound = () => import("./components/NotFound.vue")
 const Forbidden = () => import("./components/Forbidden.vue")
@@ -36,7 +36,7 @@ const routes = [
     ]
   },
 
-  { path: '/chart', component: Chart },
+  { path: '/chart', component: ChartList },
 
   { path: '/debug', component: Debug },
 
