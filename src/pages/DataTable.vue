@@ -19,7 +19,7 @@ import { NDataTable, NFlex, NRadio } from 'naive-ui';
 import { selectFrom } from "../db";
 import { gacha_type } from '../mihoyo_api';
 
-const checkedValueRef = ref(gacha_type[0]); //TODO: actor wish
+const checkedValueRef = ref('301'); //actor wish
 
 function handleChange(e) {
     checkedValueRef.value = e.target.value;
