@@ -6,7 +6,7 @@
                 {{ _type }}
             </n-radio>
         </n-flex>
-        <n-data-table flex-height  style="height: 100%;" remote ref="table" :columns="columnsRef" :data="dataRef"
+        <n-data-table flex-height striped :row-class-name="rowClassName" style="height: 100%;" remote ref="table" :columns="columnsRef" :data="dataRef"
             :loading="loadingRef" :pagination="paginationReactive" :row-key="rowKey" @update:sorter="handleSorterChange"
             @update:filters="handleFiltersChange" @update:page="handlePageChange" />
     </n-flex>
@@ -23,6 +23,7 @@ const checkedValueRef = ref('301'); //actor wish
 
 function handleChange(e) {
     checkedValueRef.value = e.target.value;
+    paginationReactive.page = 1;
     query(
         paginationReactive.page,
         paginationReactive.pageSize,
@@ -83,6 +84,22 @@ const columns = [
 ]
 
 const data = [];
+
+function rowClassName(row, index) {
+    const rank = parseInt(row.rank_type);
+    let style = "";
+    switch(rank) {
+        case 5:
+            style = "yellow"
+            break;
+        case 4:
+            style = "purple"
+            break;
+        default:
+    }
+
+    return style
+}
 
 async function query(page, pageSize = 10, order = 'ascend', filterValues = []) {
     const offset = (page - 1) * pageSize;
@@ -160,6 +177,7 @@ function handleFiltersChange(filters, sourceColumn) {
         // console.log(filters)
         const filterValues = filters[sourceColumn.key] || []
 
+        paginationReactive.page = 1;
         // console.log(filterValues)
         query(
             paginationReactive.page,
@@ -195,3 +213,19 @@ function handlePageChange(currentPage) {
 }
 
 </script>
+
+<style scoped>
+
+
+.age {
+    color: rgba(0, 128, 0, 0.75)
+}
+
+:deep(.yellow td) {
+    color: rgb(194, 191, 0) !important;
+}
+
+:deep(.purple td) {
+    color: purple !important;
+}
+</style>

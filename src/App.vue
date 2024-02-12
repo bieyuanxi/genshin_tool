@@ -1,5 +1,5 @@
 <template>
-    <AppMain></AppMain>
+    <Container></Container>
 </template>
   
 <script setup>
@@ -13,7 +13,7 @@ import { create_table, getDb } from "./db"
 import { user } from "./store"
 import { short } from './utils';
 
-import AppMain from "./AppMain.vue"
+import Container from "./Container.vue"
 
 const router = useRouter();
 const route = useRoute();

@@ -2,24 +2,32 @@
     <n-button type="info" @click="getAllGachaLog">
         Update Gacha Data
     </n-button>
-    <pre>{{ JSON.stringify(user, null, 4) }}</pre>
+    <pre>{{ JSON.stringify(user, replacer, 4) }}</pre>
 </template>
 
 
 
 
 <script setup>
+import { computed } from "vue";
 import { info, warn } from "tauri-plugin-log-api";
 import { user } from "../store"
 import { requestGachaLog } from "../genshin";
 import { gacha_type } from "../mihoyo_api";
-import { sleep } from "../utils";
+import { sleep, short } from "../utils";
 import { getDb, val2sql, key2sql } from "../db";
 
 
 const props = defineProps({
     id: String,
 })
+
+const replacer = (key, val) => {
+    if(key == 'game_token' || key == 'stoken' || key == 'authkeyB'){
+        return short(val)
+    }
+    return val
+}
 
 console.log(`id: ${props.id}`)
 
