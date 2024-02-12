@@ -1,6 +1,6 @@
 <template>
     <n-flex vertical>
-        <v-chart :option="option" autoresize/>
+        <v-chart :option="option" autoresize />
     </n-flex>
 </template>
 
@@ -14,8 +14,8 @@ import {
     LegendComponent,
 } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
-import { ref, provide, onMounted, reactive, onBeforeMount } from 'vue';
-import { NGrid, NGi, NFlex } from "naive-ui"
+import { ref, provide } from 'vue';
+import { NFlex } from "naive-ui"
 
 use([
     CanvasRenderer,
@@ -39,6 +39,12 @@ const data1 = ref([
     "actor_msgTODO", "weapon_msgTODO", "normal_msgTODO"
 ])
 
+const legend = ref([])
+
+for (const { name, value } of props.data) {
+    legend.value.push(name)
+}
+
 const option = ref({
     title: {
         text: props.title,
@@ -51,7 +57,7 @@ const option = ref({
     legend: {
         orient: 'vertical',
         left: 'left',
-        data: [],   //TODO
+        data: legend,   //TODO
     },
     series: [
         {
@@ -73,6 +79,4 @@ const option = ref({
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

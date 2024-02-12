@@ -10,9 +10,20 @@
 import { ref, provide, onMounted, reactive } from 'vue';
 import { NGrid, NGi } from "naive-ui"
 
-import Chart from '../components/Chart.vue';
+// import Chart from '../components/Chart.vue';
 import { getDb } from '../db';
 import { gacha_type } from '../mihoyo_api';
+
+import { defineAsyncComponent } from 'vue'
+
+const Chart = defineAsyncComponent(async () => {
+    await summary();
+
+    return import('../components/Chart.vue')
+}
+
+
+)
 
 const actor_data = ref([
     // { value: 335, name: '5star' },
@@ -21,10 +32,6 @@ const actor_data = ref([
 ])
 const weapon_data = ref([])
 const normal_data = ref([])
-
-
-summary()
-
 
 async function summary() {
     await summaryActor();
@@ -99,16 +106,16 @@ async function summaryNormal() {
     const type = '200'
     const db = await getDb();
     const item_type = ['角色', '武器'];
+    const item_type1 = ['actor', 'weapon'];
     const rank_type = ['4', '5'];
 
-    for (let item of item_type) {
+    for (let [index, item] of item_type.entries()) {
         for (let rank of rank_type) {
             let sql = `SELECT COUNT(*) AS count FROM gacha_log WHERE gacha_type=${type} AND rank_type='${rank}' AND item_type='${item}'`;
             const result = await db.select(sql);
-            console.log(sql)
-            console.log(result)
-            normal_data.value.push({ value: result[0].count, name: `${rank}star_${item}` })
-            // pie_normal_data.legend_data.push(`${rank}star_${item}`)
+            // console.log(sql)
+            // console.log(result)
+            normal_data.value.push({ value: result[0].count, name: `${rank}star_${item_type1[index]}` })
         }
     }
 }
