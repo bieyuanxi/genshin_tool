@@ -16,29 +16,29 @@ const Debug = () => import("./components/Debug.vue")
 const routes = [
   { path: '/home/:id?', component: Home, props: true },
   { path: '/login', component: Login },
-  // { path: '/statistics', component: Statistics },
+  { path: '/statistics', component: Statistics },
   { path: '/data_table', component: DataTable },
-  // {
-  //   path: '/setting', component: Setting,
-  //   children: [
-  //     {
-  //       path: 'about',
-  //       components: {
-  //         sub_view: About
-  //       }
-  //     },
-  //     // {
-  //     //   path: 'debug',  //debug
-  //     //   components: {
-  //     //     sub_view: Debug
-  //     //   }
-  //     // },
-  //   ]
-  // },
+  {
+    path: '/setting', component: Setting,
+    children: [
+      {
+        path: 'about',
+        components: {
+          sub_view: About
+        }
+      },
+      // {
+      //   path: 'debug',  //debug
+      //   components: {
+      //     sub_view: Debug
+      //   }
+      // },
+    ]
+  },
 
   { path: '/chart', component: ChartList },
 
-  // { path: '/debug', component: Debug },
+  { path: '/debug', component: Debug },
 
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]

@@ -17,7 +17,6 @@
 </template>
 
 <script setup>
-import { defineProps, withDefaults } from 'vue';
 import { NList, NListItem } from "naive-ui"
 
 const props = defineProps({
