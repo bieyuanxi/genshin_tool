@@ -1,12 +1,12 @@
 <template>
-    <n-flex vertical>
+    <n-flex vertical style="height: 100%;">
         <n-flex>
             <n-radio v-for="_type in gacha_type" :checked="checkedValueRef == _type" :value="_type" name="basic-demo"
                 @change="handleChange">
                 {{ _type }}
             </n-radio>
         </n-flex>
-        <n-data-table flex-height :style="{ height: `90vh` }" remote ref="table" :columns="columnsRef" :data="dataRef"
+        <n-data-table flex-height  style="height: 100%;" remote ref="table" :columns="columnsRef" :data="dataRef"
             :loading="loadingRef" :pagination="paginationReactive" :row-key="rowKey" @update:sorter="handleSorterChange"
             @update:filters="handleFiltersChange" @update:page="handlePageChange" />
     </n-flex>
