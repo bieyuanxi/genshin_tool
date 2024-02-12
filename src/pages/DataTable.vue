@@ -41,7 +41,7 @@ const column_id = {
     title: 'id',
     key: 'id',
     sorter: true,
-    sortOrder: false
+    sortOrder: "descend"
 }
 
 const column_rank_type = {
@@ -101,10 +101,15 @@ function rowClassName(row, index) {
     return style
 }
 
-async function query(page, pageSize = 10, order = 'ascend', filterValues = []) {
+async function query(page, pageSize = 10, order = 'asc', filterValues = []) {
     const offset = (page - 1) * pageSize;
     let where = `gacha_type='${checkedValueRef.value}'`;
     where = (filterValues.length == 0) ? where : `${where} AND rank_type IN (${filterValues.toString()})`;
+    
+    if(order) {
+        where = `${where} ORDER BY id ${order.split('end')[0]}`
+    }
+    
 
     const total = await selectFrom("COUNT(*) as count", "gacha_log", where);
 
@@ -152,9 +157,10 @@ function rowKey(rowData) {
 
 
 function handleSorterChange(sorter) {
-    if (!sorter || sorter.columnKey === 'column_id') {
+    if (!sorter || sorter.columnKey === 'id') {
         if (!loadingRef.value) {
             loadingRef.value = true
+            console.log(sorter)
             query(
                 paginationReactive.page,
                 paginationReactive.pageSize,
