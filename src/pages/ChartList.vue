@@ -1,27 +1,20 @@
 <template>
-    <n-grid x-gap="0" :cols="3" style="height: 100%;">
-        <n-gi>
-            <ChartActor class="chart" title="Actor" :data="actor_data" />
-        </n-gi>
-        <n-gi>
-            <ChartWeapon class="chart" title="Weapon" :data="weapon_data" />
-        </n-gi>
-        <n-gi>
-            <ChartNormal class="chart" title="Normal" :data="normal_data" />
-        </n-gi>
-    </n-grid>
+    <n-flex justify="space-around" :size='0' style="height: 100%;">
+        <ChartActor class="chart" title="Actor" :data="actor_data" />
+        <ChartWeapon class="chart" title="Weapon" :data="weapon_data" />
+        <ChartNormal class="chart" title="Normal" :data="normal_data" />
+    </n-flex>
 </template>
 
 <script setup>
-import { ref, provide, onMounted, reactive } from 'vue';
-import { NGrid, NGi } from "naive-ui"
+import { ref } from 'vue';
+import { NFlex } from "naive-ui"
 
 // import Chart from '../components/Chart.vue';
 import { getDb } from '../db';
 import { gacha_type } from '../mihoyo_api';
 
 import { defineAsyncComponent } from 'vue'
-import { sleep } from '../utils';
 
 const ChartActor = defineAsyncComponent(async () => {
     await summaryActor();
@@ -158,7 +151,7 @@ async function query() {
 <style scoped>
 .chart {
     height: 100%;
-    width: 100%;
+    width: 33.3%;
 }
 </style>
 
