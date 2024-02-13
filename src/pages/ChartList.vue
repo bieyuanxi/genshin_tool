@@ -1,9 +1,15 @@
 <template>
-    <n-flex justify="space-around" :size='0' style="height: 100%;">
-        <Chart class="chart" title="Actor" :data="actor_data"></Chart>
-        <Chart class="chart" title="Weapon" :data="weapon_data"></Chart>
-        <Chart class="chart" title="Normal" :data="normal_data"></Chart>
-    </n-flex>
+    <n-grid x-gap="0" :cols="3" style="height: 100%;">
+        <n-gi>
+            <ChartActor class="chart" title="Actor" :data="actor_data" />
+        </n-gi>
+        <n-gi>
+            <ChartWeapon class="chart" title="Weapon" :data="weapon_data" />
+        </n-gi>
+        <n-gi>
+            <ChartNormal class="chart" title="Normal" :data="normal_data" />
+        </n-gi>
+    </n-grid>
 </template>
 
 <script setup>
@@ -15,15 +21,25 @@ import { getDb } from '../db';
 import { gacha_type } from '../mihoyo_api';
 
 import { defineAsyncComponent } from 'vue'
+import { sleep } from '../utils';
 
-const Chart = defineAsyncComponent(async () => {
-    await summary();
+const ChartActor = defineAsyncComponent(async () => {
+    await summaryActor();
 
     return import('../components/Chart.vue')
-}
+})
 
+const ChartWeapon = defineAsyncComponent(async () => {
+    await summaryWeapon();
 
-)
+    return import('../components/Chart.vue')
+})
+
+const ChartNormal = defineAsyncComponent(async () => {
+    await summaryNormal();
+
+    return import('../components/Chart.vue')
+})
 
 const actor_data = ref([
     // { value: 335, name: '5star' },
@@ -142,7 +158,7 @@ async function query() {
 <style scoped>
 .chart {
     height: 100%;
-    width: 33.3%;
+    width: 100%;
 }
 </style>
 
