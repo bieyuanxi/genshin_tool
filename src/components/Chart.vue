@@ -1,6 +1,10 @@
 <template>
     <n-flex vertical>
-        <v-chart :option="option" autoresize />
+        <v-chart :option="option" autoresize style="height: 70%;"/>
+        <n-flex>
+            <n-tag size="small" v-for="one in props.list">{{ one.name }}[{{ one.count }}]</n-tag>
+        </n-flex>
+        
     </n-flex>
 </template>
 
@@ -15,7 +19,7 @@ import {
 } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
 import { ref, provide } from 'vue';
-import { NFlex } from "naive-ui"
+import { NFlex, NTag } from "naive-ui"
 
 use([
     CanvasRenderer,
@@ -33,11 +37,11 @@ const props = defineProps({
         name: String,
         value: Number
     },
+    list: {
+        name: String,
+        count: Number
+    }
 })
-
-const data1 = ref([
-    "actor_msgTODO", "weapon_msgTODO", "normal_msgTODO"
-])
 
 const legend = ref([])
 
@@ -57,7 +61,7 @@ const option = ref({
     legend: {
         orient: 'vertical',
         left: 'left',
-        data: legend,   //TODO
+        data: legend,
     },
     series: [
         {

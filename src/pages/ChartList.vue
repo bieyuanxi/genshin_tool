@@ -1,14 +1,14 @@
 <template>
     <n-flex justify="space-around" :size='0' style="height: 100%;">
-        <ChartActor class="chart" title="Actor" :data="actor_data" />
-        <ChartWeapon class="chart" title="Weapon" :data="weapon_data" />
-        <ChartNormal class="chart" title="Normal" :data="normal_data" />
+        <ChartActor class="chart" title="Actor" :data="actor_data" :list="actor_list"/>
+        <ChartWeapon class="chart" title="Weapon" :data="weapon_data" :list="weapon_list"/>
+        <ChartNormal class="chart" title="Normal" :data="normal_data" :list="normal_list"/>
     </n-flex>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { NFlex } from "naive-ui"
+import { NFlex, NTag } from "naive-ui"
 
 // import Chart from '../components/Chart.vue';
 import { getDb } from '../db';
@@ -42,12 +42,9 @@ const actor_data = ref([
 const weapon_data = ref([])
 const normal_data = ref([])
 
-async function summary() {
-    await summaryActor();
-    await summaryWeapon();
-    await summaryNormal();
-    // await query();
-}
+const actor_list = ref([])
+const weapon_list = ref([])
+const normal_list = ref([])
 
 async function summaryActor() {
     const type = '301'
@@ -76,9 +73,7 @@ async function summaryActor() {
         actor_data.value.push({ value: result[0].count, name: "4star_actor" })
     }
 
-    // pie_actor_data.legend_data.push('5star', '4star_actor', '4star_weapon')
-
-    // console.log(pie_actor_data)
+    actor_list.value = await queryList(type);
 }
 
 async function summaryWeapon() {
@@ -108,6 +103,7 @@ async function summaryWeapon() {
         weapon_data.value.push({ value: result[0].count, name: "4star_actor" })
     }
 
+    weapon_list.value = await queryList(type);
     // pie_weapon_data.legend_data.push('5star', '4star_actor', '4star_weapon')
 }
 
@@ -127,24 +123,29 @@ async function summaryNormal() {
             normal_data.value.push({ value: result[0].count, name: `${rank}star_${item_type1[index]}` })
         }
     }
+
+    normal_list.value = await queryList(type);
 }
 
-async function query() {
-    // const item_type = ['角色', '武器'];
-    // const rank_type = ['4', '5'];
+async function queryList(type) {
     const db = await getDb();
-    const type = '5'
-    const gacha_type = ['200', '301', '302'];
-    for (let type of gacha_type) {
-        let sql = `SELECT * FROM gacha_log WHERE gacha_type=${type} AND rank_type='5'`;
-        const result = await db.select(sql);
-        console.log(result)
-        for (let one of result) {
-            data.value.push(one.name);
-        }
+
+    let sql = `SELECT * FROM gacha_log WHERE gacha_type=${type} AND rank_type='5' ORDER BY id asc`
+    const result = await db.select(sql);
+
+    let list = [];
+    let left = 0;
+
+    for (const [index, row] of result.entries()) {
+        let sql = `SELECT count(*) as count FROM gacha_log WHERE gacha_type=${type} AND id BETWEEN ${left} AND ${row.id}`
+        const countResult = await db.select(sql);
+        // console.log(result[0].count)
+        list.push({ name: result[index].name, count: countResult[0].count - 1 });
+
+        left = row.id
     }
 
-
+    return list;
 }
 </script>
 
