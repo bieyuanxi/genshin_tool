@@ -1,6 +1,6 @@
 <template>
-    <n-flex vertical>
-        <v-chart :option="option" autoresize style="height: 70%;"/>
+    <n-flex vertical style="height: 100%;">
+        <v-chart :option="option" autoresize class="chart"/>
         <n-flex>
             <n-tag size="small" v-for="one in props.list">{{ one.name }}[{{ one.count }}]</n-tag>
         </n-flex>
@@ -83,4 +83,9 @@ const option = ref({
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.chart {
+    height: 70%;
+    width: 100%;
+}
+</style>

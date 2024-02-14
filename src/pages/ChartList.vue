@@ -1,8 +1,15 @@
 <template>
     <n-flex justify="space-around" :size='0' style="height: 100%;">
-        <ChartActor class="chart" title="Actor" :data="actor_data" :list="actor_list"/>
-        <ChartWeapon class="chart" title="Weapon" :data="weapon_data" :list="weapon_list"/>
-        <ChartNormal class="chart" title="Normal" :data="normal_data" :list="normal_list"/>
+        <div class="chart">
+            <ChartActor title="Actor" :data="actor_data" :list="actor_list" />
+        </div>
+        <div class="chart">
+            <ChartWeapon title="Weapon" :data="weapon_data" :list="weapon_list" />
+        </div>
+        <div class="chart">
+            <ChartNormal title="Normal" :data="normal_data" :list="normal_list" />
+        </div>
+
     </n-flex>
 </template>
 
@@ -15,6 +22,8 @@ import { getDb } from '../db';
 import { gacha_type } from '../mihoyo_api';
 
 import { defineAsyncComponent } from 'vue'
+import Forbidden from "../components/Forbidden.vue"
+import { sleep } from '../utils';
 
 const ChartActor = defineAsyncComponent(async () => {
     await summaryActor();
@@ -152,7 +161,7 @@ async function queryList(type) {
 <style scoped>
 .chart {
     height: 100%;
-    width: 33.3%;
+    width: 33%;
 }
 </style>
 
