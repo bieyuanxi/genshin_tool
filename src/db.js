@@ -99,6 +99,7 @@ async function _create_tbl(db) {
             uid         TEXT PRIMARY KEY NOT NULL,
             mid         TEXT,
             game_token  TEXT,
+            stoken      TEXT,
             login_time  INT     NOT NULL
         );`
     );

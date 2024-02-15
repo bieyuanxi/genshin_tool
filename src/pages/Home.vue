@@ -13,7 +13,7 @@ import { computed } from "vue";
 import { info, warn } from "tauri-plugin-log-api";
 import { user } from "../store"
 import { requestGachaLog } from "../genshin";
-import { gacha_type } from "../mihoyo_api";
+import { gacha_type, getUserGameRoles, getGachaAuthkey } from "../mihoyo_api";
 import { sleep, short } from "../utils";
 import { getDb, val2sql, key2sql } from "../db";
 
@@ -23,7 +23,7 @@ const props = defineProps({
 })
 
 const replacer = (key, val) => {
-    if(key == 'game_token' || key == 'stoken' || key == 'authkeyB'){
+    if (key == 'game_token' || key == 'stoken' || key == 'authkeyB') {
         return short(val)
     }
     return val
@@ -52,7 +52,14 @@ On Windows:
     TODO
 */
 
-async function getAllGachaLog(){
+async function getAllGachaLog() {
+    const stoken = user.stoken;
+    const mid = user.mid;
+    const roles = await getUserGameRoles(stoken, mid);
+    const { game_uid, region, game_biz, region_name, nickname } = roles[0];  //use first TODO
+    const authkey = await getGachaAuthkey({ game_uid, region, stoken, mid })
+    user.authkeyB = authkey;
+    
     for (const type of gacha_type) {
         await getGachaLog(user.authkeyB, type);
         await sleep(200);
@@ -75,18 +82,18 @@ async function getGachaLog(authKey = "invalid_authkey", type = "301") {
                 const result = await merge(list);
                 rowsInsert += result.rowsAffected;
                 check = !(result.rowsAffected < size);
-            }else{  // no data found from server
+            } else {  // no data found from server
                 check = false;  //break
             }
         } else {    // api retcode error
-            console.log(resp);  warn(resp.message);
+            console.log(resp); warn(resp.message);
             break;
         }
 
         if (check) await sleep(200);
     }
     const msg = `in getGachaLog, type=${type}, total rows affected: ${rowsInsert}`
-    console.log(msg);  info(msg);
+    console.log(msg); info(msg);
 }
 
 async function merge(list = []) {

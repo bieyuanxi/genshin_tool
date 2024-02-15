@@ -58,6 +58,8 @@ async function loadUser() {
 
         user.uid = row.uid;
         user.game_token = row.game_token;
+        user.mid = row.mid;
+        user.stoken = row.stoken;
     }
 
     // console.log(user)
