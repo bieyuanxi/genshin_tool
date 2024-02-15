@@ -3,7 +3,7 @@
 </template>
   
 <script setup>
-import { watch, watchEffect } from "vue";
+import { defineAsyncComponent, watch, watchEffect } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { info } from "tauri-plugin-log-api"
 
@@ -13,17 +13,23 @@ import { create_table, getDb } from "./db"
 import { user } from "./store"
 import { short } from './utils';
 
-import Container from "./Container.vue"
+// import Container from "./Container.vue"
+import { firstPage } from "./config";
 
 const router = useRouter();
 const route = useRoute();
 
-watch(() => route.path, async () => {
-    console.log(route.path)
+const Container = defineAsyncComponent(async () => {
+    await create_table();
+    await loadUser();
+    await router.replace(firstPage);
+
+    return import("./Container.vue")
 })
 
-watchEffect(async () => {
+async function loadUser() {
     let db = await getDb();
+
     let ret = await db.select("SELECT * FROM users ORDER BY login_time DESC LIMIT 1");
     if (ret.length > 0) {
         const row = ret[0];
@@ -32,7 +38,11 @@ watchEffect(async () => {
         user.game_token = row.game_token;
     }
 
-    console.log(user)
+    // console.log(user)
+}
+
+watch(() => route.path, async () => {
+    console.log(route.path)
 })
 
 watch(
@@ -67,10 +77,6 @@ watch(
         console.log(authkey); info(authkey);
     }
 )
-
-/*** before app mount ***/
-create_table();
-/*** end ***/
 </script>
 
 <style scoped></style>

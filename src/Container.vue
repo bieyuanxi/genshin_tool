@@ -31,14 +31,11 @@ import {
 
 import { user } from "./store"
 import { firstPage } from "./config";
-import router from "./router";
 
 const collapsed = ref(true);
 const theme = ref(darkTheme);
 const select = ref(firstPage);
 const homePath = computed(() => `/home/${user.uid}`)
-
-router.replace(firstPage);
 
 const menuOptions = ref([
     {
