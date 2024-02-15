@@ -13,7 +13,7 @@ import { computed } from "vue";
 import { info, warn } from "tauri-plugin-log-api";
 import { user } from "../store"
 import { requestGachaLog } from "../genshin";
-import { gacha_type, getUserGameRoles, getGachaAuthkey } from "../mihoyo_api";
+import { gacha_type, getUserGameRolesByStoken, getGachaAuthkey } from "../mihoyo_api";
 import { sleep, short } from "../utils";
 import { getDb, val2sql, key2sql } from "../db";
 
@@ -55,14 +55,32 @@ On Windows:
 async function getAllGachaLog() {
     const stoken = user.stoken;
     const mid = user.mid;
-    const roles = await getUserGameRoles(stoken, mid);
-    const { game_uid, region, game_biz, region_name, nickname } = roles[0];  //use first TODO
-    const authkey = await getGachaAuthkey({ game_uid, region, stoken, mid })
-    user.authkeyB = authkey;
-    
-    for (const type of gacha_type) {
-        await getGachaLog(user.authkeyB, type);
-        await sleep(200);
+    const resp = await getUserGameRolesByStoken({ stoken, mid });
+    switch (resp.retcode) {
+        case 0:
+            const roles = resp.data.list;
+            const { game_uid, region, game_biz, region_name, nickname } = roles[0];  //use first TODO
+            // FIX ME: nasty code
+            user.game_biz = game_biz;
+            user.game_uid = game_uid;
+            user.nickname = nickname;
+            user.region = region;
+            user.region_name = region_name;
+
+            const authkey = await getGachaAuthkey({ game_uid, region, stoken, mid })
+            user.updateAuthkeyB(authkey);
+
+            for (const [index, type] of gacha_type.entries()) {
+                if (index > 0) await sleep(200);
+                await getGachaLog(user.authkeyB, type);
+            }
+            break;
+        case -100:  // stoken expired
+            console.log(resp);  warn(JSON.stringify(resp)); //TODO: generate stoken using game_token
+            break;
+        default:    // other error
+            console.log(resp); warn(JSON.stringify(resp));
+            break;
     }
 }
 
