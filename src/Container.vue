@@ -20,6 +20,8 @@ import { short } from './utils';
 watch(
     () => user.game_token,
     async (newVal, oldVal) => {
+        const msg = `user: ${user.uid}, game_token: ${short(user.game_token)}`;
+        console.log(msg);   info(msg);
         await sqlUpdateUser({ uid: user.uid, game_token: user.game_token });
     }
 )
@@ -28,7 +30,7 @@ async function sqlUpdateUser({ uid, game_token }) {
     const login_time = (Date.now() / 1000).toFixed();
     const db = await getDb();
     const sql = `REPLACE INTO users(uid, game_token, login_time) VALUES ('${uid}','${game_token}',${login_time})`;
-    console.log(sql)
+
     return await db.execute(sql);
 }
 

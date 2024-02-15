@@ -14,8 +14,8 @@ export async function gen_qrcode(url) {
  * @returns 
  */
 export function short(str = "") {
-    const left = 2;
-    const right = 2;
+    const left = 3;
+    const right = 3;
     let ret = "";
     if(str.length <= left + right) {
         ret = str;

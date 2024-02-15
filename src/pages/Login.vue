@@ -156,33 +156,16 @@ async function processQuery(data) {
                     // }
                     uid = obj.open_id;
                     game_token = obj.open_token;
-
                     break;
                 default:
                     error(`unknown proto ${proto}`)
                     throw new Error(`unknown proto ${proto}`)
             }
-
-            // console.log(await getSToken(uid, game_token));
-            console.log(await sqlUpdateUser({ uid, game_token }))
-            
             user.updateUID(uid, game_token);
-            // router.push({ path: `home/${user.account_id}` });
-
             break;  //Hey I'm a BREAK! 
         default:
             error(`process_query: unknown stat ${JSON.stringify(data)}`)
     }
-
-
-}
-
-async function sqlUpdateUser({ uid, game_token }) {
-    const login_time = (Date.now() / 1000).toFixed();
-    const db = await getDb();
-    const sql = `REPLACE INTO users(uid, game_token, login_time) VALUES ('${uid}','${game_token}',${login_time})`;
-    console.log(sql)
-    return await db.execute(sql);
 }
 
 </script>
