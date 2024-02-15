@@ -1,111 +1,62 @@
 <template>
-    <n-config-provider :theme="theme">
-        <n-layout has-sider style="height: 100vh; width: 100vw;">
-            <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
-                show-trigger @collapse="collapsed = true" @expand="collapsed = false">
-                <n-menu v-model:value="select" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions" />
-            </n-layout-sider>
-
-            <n-layout content-style="padding: 12px;">
-                <router-view></router-view>
-            </n-layout>
-        </n-layout>
-    </n-config-provider>
+    <router-view></router-view>
 </template>
   
 <script setup>
-import { computed, h, onBeforeMount, ref, watch, watchEffect } from "vue";
-import { RouterLink } from "vue-router";
-import { NIcon, NLayout, NLayoutSider, NConfigProvider, NMenu } from "naive-ui";
-import { darkTheme, lightTheme } from 'naive-ui'
-import {
-    BookOutline as BookIcon,
-    PersonOutline as PersonIcon,
-    WineOutline as WineIcon,
-    HomeOutline as HomeIcon,
-    BugOutline as BugIon,
-    SettingsOutline as SettingsIcon,
-    DocumentOutline as DocumentIcon,
-    PieChartOutline as PieChartIcon,
-} from "@vicons/ionicons5";
+import { watch, watchEffect } from "vue";
+import { info } from "tauri-plugin-log-api"
+
+import { getGachaAuthkey, getSToken, getUserGameRoles } from './mihoyo_api';
+import { getDb } from "./db"
 
 import { user } from "./store"
-import { firstPage } from "./config";
+import { short } from './utils';
 
-const collapsed = ref(true);
-const theme = ref(darkTheme);
-const select = ref(firstPage);
-const homePath = computed(() => `/home/${user.uid}`)
+// watchEffect(async () => {
+//     const msg = `user: ${user.uid}`;
+//     console.log(msg); info(msg);
+// })
 
-const menuOptions = ref([
-    {
-        label: routerLink("/login", "Login"),
-        key: "login",
-        disabled: false,
-        icon: renderIcon(PersonIcon)
-    },
-    {
-        label: routerLink(homePath, "Home"),
-        key: "home",
-        disabled: false,
-        icon: renderIcon(HomeIcon)
-    },
-    {
-        label: routerLink("/statistics", "Statistics"),
-        key: "statistics",
-        disabled: true,
-        show: false,
-        icon: renderIcon(BookIcon)
-    },
-    {
-        label: routerLink("/chart", "Chart"),
-        key: "chart",
-        disabled: false,
-        icon: renderIcon(PieChartIcon)
-    },
-    {
-        label: routerLink("/data_table", "Data Table"),
-        key: "data_table",
-        disabled: false,
-        icon: renderIcon(DocumentIcon)
-    },
-    {
-        label: routerLink("/setting", "Setting"),
-        key: "setting",
-        disabled: true,
-        show: false,
-        icon: renderIcon(SettingsIcon)
-    },
-    {
-        label: routerLink("/debug", "Debug"),
-        key: "debug",
-        disabled: true,
-        show: false,
-        icon: renderIcon(BugIon)
-    },
-]);
+watch(
+    () => user.game_token,
+    async (newVal, oldVal) => {
+        await sqlUpdateUser({ uid: user.uid, game_token: user.game_token });
+    }
+)
 
-function renderIcon(icon) {
-    return () => h(NIcon, null, { default: () => h(icon) });
+async function sqlUpdateUser({ uid, game_token }) {
+    const login_time = (Date.now() / 1000).toFixed();
+    const db = await getDb();
+    const sql = `REPLACE INTO users(uid, game_token, login_time) VALUES ('${uid}','${game_token}',${login_time})`;
+    console.log(sql)
+    return await db.execute(sql);
 }
 
-function routerLink(to, name) {
-    return () => h(RouterLink,
-        { to: to },
-        { default: () => name }
-    );
-}
 
+// watch(
+//     () => user.game_token,
+//     async (newVal, oldVal) => {
+//         const msg = `game_token: ${short(oldVal)} -> ${short(newVal)}`;
+//         console.log(msg); info(msg);
+
+//         const { stoken, mid } = await getSToken(user.uid, user.game_token);
+//         const roles = await getUserGameRoles(stoken, mid);
+//         const { game_uid, region, game_biz, region_name, nickname } = roles[0];  //use first TODO
+//         const authkey = await getGachaAuthkey({ game_uid, region, stoken, mid })
+
+//         // FIX ME: ugly code
+//         user.updateSToken(stoken);
+//         user.updateAuthkeyB(authkey);
+//         user.updateGameId(game_uid);
+//         user.region = region;
+//         user.mid = mid;
+//         user.game_biz = game_biz;
+//         user.region_name = region_name;
+//         user.nickname = nickname;
+
+//         console.log(authkey); info(authkey);
+//     }
+// )
 </script>
 
-<style scoped>
-.light-green {
-    /* height: 108px; */
-    background-color: rgba(0, 128, 0, 0.12);
-}
-
-.green {
-    /* height: 108px; */
-    background-color: rgba(0, 128, 0, 0.24);
-}
-</style>
+<style scoped></style>
