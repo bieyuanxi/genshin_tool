@@ -3,9 +3,11 @@
         <div class="chart">
             <ChartActor title="Actor" :data="actor_data" :list="actor_list" />
         </div>
+        <n-divider vertical />
         <div class="chart">
             <ChartWeapon title="Weapon" :data="weapon_data" :list="weapon_list" />
         </div>
+        <n-divider vertical />
         <div class="chart">
             <ChartNormal title="Normal" :data="normal_data" :list="normal_list" />
         </div>
@@ -15,7 +17,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { NFlex, NTag } from "naive-ui"
+import { NFlex, NDivider } from "naive-ui"
 
 // import Chart from '../components/Chart.vue';
 import { getDb } from '../db';
@@ -170,17 +172,9 @@ async function queryList(type) {
 
   
 <style scoped>
-.n-layout-header,
-.n-layout-footer {
-    background: rgba(128, 128, 128, 0.2);
-    padding: 24px;
-}
-
-.n-layout-sider {
-    background: rgba(128, 128, 128, 0.3);
-}
-
-.n-layout-content {
-    background: rgba(128, 128, 128, 0.4);
+.n-divider {
+    height: 100%;
+    padding: 0%;
+    margin: 0%;
 }
 </style>

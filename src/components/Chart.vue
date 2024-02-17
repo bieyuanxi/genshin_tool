@@ -1,6 +1,7 @@
 <template>
     <n-flex vertical style="height: 100%;">
         <v-chart :option="option" autoresize class="chart"/>
+        <n-divider />
         <n-flex>
             <n-tag size="small" v-for="one in props.list">{{ one.name }}[{{ one.count }}]</n-tag>
         </n-flex>
@@ -19,7 +20,7 @@ import {
 } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
 import { ref, provide } from 'vue';
-import { NFlex, NTag } from "naive-ui"
+import { NFlex, NTag, NDivider } from "naive-ui"
 
 use([
     CanvasRenderer,
@@ -87,5 +88,10 @@ const option = ref({
 .chart {
     height: 70%;
     width: 100%;
+}
+.n-divider {
+    /* height: 100%; */
+    padding: 0%;
+    margin: 0%;
 }
 </style>

@@ -1,11 +1,6 @@
 <template>
     <n-flex vertical style="height: 100%;">
-        <n-flex>
-            <n-radio v-for="_type in gacha_type" :checked="checkedValueRef == _type" :value="_type" name="basic-demo"
-                @change="handleChange">
-                {{ _type }}
-            </n-radio>
-        </n-flex>
+        <n-select v-model:value="checkedValueRef" :options="options" @update:value="handleUpdateValue" />
         <n-data-table flex-height striped :row-class-name="rowClassName" style="height: 100%;" remote ref="table" :columns="columnsRef" :data="dataRef"
             :loading="loadingRef" :pagination="paginationReactive" :row-key="rowKey" @update:sorter="handleSorterChange"
             @update:filters="handleFiltersChange" @update:page="handlePageChange" />
@@ -14,15 +9,19 @@
   
 <script setup>
 import { defineComponent, ref, reactive, onMounted } from 'vue'
-import { NDataTable, NFlex, NRadio } from 'naive-ui';
+import { NDataTable, NFlex, NSelect } from 'naive-ui';
 
 import { selectFrom } from "../db";
 import { gacha_type } from '../mihoyo_api';
 
 const checkedValueRef = ref('301'); //actor wish
+const options = [];
+for(const type of gacha_type) {
+    options.push({label: `label_${type}`, value: type});
+}
 
-function handleChange(e) {
-    checkedValueRef.value = e.target.value;
+function handleUpdateValue(value, option) {
+    checkedValueRef.value = value;
     paginationReactive.page = 1;
     query(
         paginationReactive.page,
@@ -82,8 +81,6 @@ const columns = [
         key: 'time'
     },
 ]
-
-const data = [];
 
 function rowClassName(row, index) {
     const rank = parseInt(row.rank_type);
