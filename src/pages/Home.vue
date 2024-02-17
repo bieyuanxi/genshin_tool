@@ -1,15 +1,55 @@
 <template>
-    <n-button type="info" @click="getAllGachaLog">
-        Update Gacha Data
-    </n-button>
-    <pre>{{ JSON.stringify(user, replacer, 4) }}</pre>
+    <n-spin :show="status.loading">
+        <n-flex>
+            <n-button type="info" @click="getAllGachaLog" style="height: 48px;">
+                Update Gacha Data
+            </n-button>
+            <n-alert title="" :type="alert.type">
+                {{ alert.msg }}
+            </n-alert>
+        </n-flex>
+        <template #description>
+            {{ alert.msg }}
+        </template>
+    </n-spin>
+    <n-divider />
+    <n-list hoverable clickable>
+        <template #header>
+            Account info
+        </template>
+        <n-list-item v-for="role in gameRolesList">
+            <template #prefix>
+                <n-thing :title="`${role.nickname}`" description=""></n-thing>
+            </template>
+            <template #suffix>
+                <n-tag v-if="role.game_uid == user.game_uid" :bordered="false" type="info" size="large">
+                    Current
+                </n-tag>
+            </template>
+            <n-thing :title="`UID ${role.game_uid}`" content-style="margin-top: 10px;">
+                <template #description>
+                    <n-flex size="small" style="margin-top: 4px">
+                        <n-tag :bordered="false" type="info" size="small">
+                            {{ role.region_name }}
+                        </n-tag>
+                        <n-tag :bordered="false" type="info" size="small">
+                            lv{{ role.level }}
+                        </n-tag>
+                    </n-flex>
+                </template>
+                奋勇呀然后休息呀<br>
+                完成你伟大的人生
+            </n-thing>
+        </n-list-item>
+    </n-list>
+    <!-- <pre>{{ JSON.stringify(user, replacer, 4) }}</pre> -->
+    <!-- <pre>{{ gameRolesList }}</pre> -->
 </template>
 
-
-
-
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
+import { NList, NListItem, NThing, NFlex, NTag, NAlert, NButton, NSpin, NDivider } from "naive-ui"
+
 import { info, warn } from "tauri-plugin-log-api";
 import { user } from "../store"
 import { requestGachaLog } from "../genshin";
@@ -22,6 +62,34 @@ const props = defineProps({
     id: String,
 })
 
+const status = reactive({
+    loading: false,
+    setLoadingStatus(status = true) {
+        this.loading = status
+    },
+})
+
+const alert = reactive({
+    type: "success",
+    msg: "",
+    success(msg = "") {
+        this.type = "success"
+        this.msg = msg;
+    },
+    info(msg = "") {
+        this.type = "info"
+        this.msg = msg;
+    },
+    warn(msg = "") {
+        this.type = "warning"
+        this.msg = msg;
+    },
+    error(msg = "") {
+        this.type = "error"
+        this.msg = msg;
+    }
+})
+
 const replacer = (key, val) => {
     if (key == 'game_token' || key == 'stoken' || key == 'authkeyB') {
         return short(val)
@@ -29,59 +97,58 @@ const replacer = (key, val) => {
     return val
 }
 
-console.log(`id: ${props.id}`)
+const gameRolesList = reactive([]);
 
-/*
-identifier=org.flyme2genshin.dev    //see tauri.conf.json: tauri.bundle.identifier
-on Linux:
-    App: ~/.config/{identifier}/
-    AppCache: ~/.cache/{identifier}/
-    AppConfig: ~/.config/{identifier}/
-    AppData: ~/.local/share/{identifier}/
-    AppLocalData: ~/.local/share/{identifier}/
-    AppLog: ~/.cache/{identifier}/logs/
-    Audio: ~/Music/
-    Cache: ~/.cache/
-    Config: ~/.config/
-    Data: ~/.local/share/
-    LocalData: ~/.local/share/
-    Log: ~/.cache/{identifier}/logs/
-    Resource: ./        //path of executable file
-    Executable: ~/.local/bin/
-On Windows:
-    TODO
-*/
-
-async function getAllGachaLog() {
+onMounted(async () => {
     const stoken = user.stoken;
     const mid = user.mid;
-    const resp = await getUserGameRolesByStoken({ stoken, mid });
+    alert.info("Query game roles")
+    const resp = await getUserGameRolesByStoken({ stoken, mid });   //TODO: no internet error handle
+
     switch (resp.retcode) {
         case 0:
             const roles = resp.data.list;
-            const { game_uid, region, game_biz, region_name, nickname } = roles[0];  //use first TODO
+            gameRolesList.push(...roles);
+
+            const { game_uid, region, game_biz, region_name, nickname } = roles[0];  //TODO: select last game_uid from db
             // FIX ME: nasty code
             user.game_biz = game_biz;
             user.game_uid = game_uid;
             user.nickname = nickname;
             user.region = region;
             user.region_name = region_name;
-
-            const authkey = await getGachaAuthkey({ game_uid, region, stoken, mid })
-            user.updateAuthkeyB(authkey);
-
-            for (const [index, type] of gacha_type.entries()) {
-                if (index > 0) await sleep(200);
-                await getGachaLog(user.authkeyB, type);
-            }
             break;
         case -100:  // stoken expired
-            console.log(resp);  warn(JSON.stringify(resp)); //TODO: generate stoken using game_token
+            alert.warn(resp)
+            console.log(resp); warn(JSON.stringify(resp)); //TODO: generate stoken using game_token
             break;
         default:    // other error
+            alert.error(resp)
             console.log(resp); warn(JSON.stringify(resp));
             break;
     }
+    await sleep(200)
+})
+
+async function getAllGachaLog() {
+    status.setLoadingStatus(true);
+
+    const stoken = user.stoken;
+    const mid = user.mid;
+    const region = user.region;
+    const game_uid = user.game_uid;
+
+    const authkey = await getGachaAuthkey({ game_uid, region, stoken, mid })
+    user.updateAuthkeyB(authkey);
+    alert.info("getGachaAuthkey")
+
+    for (const [index, type] of gacha_type.entries()) {
+        if (index > 0) await sleep(200);
+        await getGachaLog(user.authkeyB, type);
+        alert.info(`getGachaLog:${type}`)
+    }
+
+    status.setLoadingStatus(false);
 }
 
 async function getGachaLog(authKey = "invalid_authkey", type = "301") {
@@ -127,3 +194,7 @@ async function merge(list = []) {
 }
 
 </script>
+
+<style scoped>
+
+</style>

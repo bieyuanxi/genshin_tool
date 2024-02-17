@@ -112,8 +112,8 @@ const menuOptions = ref([
     {
         label: routerLink("/debug", "Debug"),
         key: "debug",
-        disabled: true,
-        show: false,
+        disabled: !(import.meta.env.DEV),
+        show: (import.meta.env.DEV),
         icon: renderIcon(BugIon)
     },
 ]);
