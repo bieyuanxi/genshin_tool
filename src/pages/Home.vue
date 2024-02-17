@@ -42,8 +42,6 @@
             </n-thing>
         </n-list-item>
     </n-list>
-    <!-- <pre>{{ JSON.stringify(user, replacer, 4) }}</pre> -->
-    <!-- <pre>{{ gameRolesList }}</pre> -->
 </template>
 
 <script setup>
@@ -90,12 +88,7 @@ const alert = reactive({
     }
 })
 
-const replacer = (key, val) => {
-    if (key == 'game_token' || key == 'stoken' || key == 'authkeyB') {
-        return short(val)
-    }
-    return val
-}
+
 
 const gameRolesList = reactive([]);
 

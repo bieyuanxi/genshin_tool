@@ -20,6 +20,7 @@
             ins
         </n-button>
     </n-flex>
+    <pre>{{ JSON.stringify(user, replacer, 4) }}</pre>
 </template>
 
 
@@ -32,6 +33,8 @@ import router from "../router";
 import { readLog, requestGachaLog, getGaChaAuthKey } from "../genshin";
 import { sys_config, db_name } from "../config";
 import { insertInto, create_table } from "../db"
+import { user } from "../store";
+import { short } from "../utils";
 
 /*
         `CREATE TABLE IF NOT EXISTS user(
@@ -58,5 +61,10 @@ async function ins() {
     await insertInto("user", [user]);
 }
 
-
+const replacer = (key, val) => {
+    if (key == 'game_token' || key == 'stoken' || key == 'authkeyB') {
+        return short(val)
+    }
+    return val
+}
 </script>
