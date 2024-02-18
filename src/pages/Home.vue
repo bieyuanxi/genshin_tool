@@ -1,52 +1,50 @@
 <template>
-    <n-spin :show="status.loading">
-        <n-flex>
-            <n-button type="info" @click="getAllGachaLog" style="height: 48px;">
+    <n-flex>
+        <n-spin :show="status.loading">
+            <n-button type="info" @click="getAllGachaLog">
                 Update Gacha Data
             </n-button>
-            <n-alert title="" :type="alert.type">
-                {{ alert.msg }}
-            </n-alert>
-        </n-flex>
-        <template #description>
-            {{ alert.msg }}
-        </template>
-    </n-spin>
-    <n-divider />
-    <n-list hoverable clickable>
-        <template #header>
-            Account info
-        </template>
-        <n-list-item v-for="role in gameRolesList">
-            <template #prefix>
-                <n-thing :title="`${role.nickname}`" description=""></n-thing>
+            <template #description>
+                {{ status.msg }}
             </template>
-            <template #suffix>
-                <n-tag v-if="role.game_uid == user.game_uid" :bordered="false" type="info" size="large">
-                    Current
-                </n-tag>
+        </n-spin>
+        <n-divider />
+        <n-list hoverable clickable style="width: 100%;">
+            <template #header>
+                Account info
             </template>
-            <n-thing :title="`UID ${role.game_uid}`" content-style="margin-top: 10px;">
-                <template #description>
-                    <n-flex size="small" style="margin-top: 4px">
-                        <n-tag :bordered="false" type="info" size="small">
-                            {{ role.region_name }}
-                        </n-tag>
-                        <n-tag :bordered="false" type="info" size="small">
-                            lv{{ role.level }}
-                        </n-tag>
-                    </n-flex>
+            <n-list-item v-for="role in gameRolesList">
+                <template #prefix>
+                    <n-thing :title="`${role.nickname}`" description=""></n-thing>
                 </template>
-                奋勇呀然后休息呀<br>
-                完成你伟大的人生
-            </n-thing>
-        </n-list-item>
-    </n-list>
+                <template #suffix>
+                    <n-tag v-if="role.game_uid == user.game_uid" :bordered="false" type="info" size="large">
+                        Current
+                    </n-tag>
+                </template>
+                <n-thing :title="`UID ${role.game_uid}`" content-style="margin-top: 10px;">
+                    <template #description>
+                        <n-flex size="small" style="margin-top: 4px">
+                            <n-tag :bordered="false" type="info" size="small">
+                                {{ role.region_name }}
+                            </n-tag>
+                            <n-tag :bordered="false" type="info" size="small">
+                                lv{{ role.level }}
+                            </n-tag>
+                        </n-flex>
+                    </template>
+                    奋勇呀然后休息呀<br>
+                    完成你伟大的人生
+                </n-thing>
+            </n-list-item>
+        </n-list>
+    </n-flex>
 </template>
 
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import { NList, NListItem, NThing, NFlex, NTag, NAlert, NButton, NSpin, NDivider } from "naive-ui"
+import { useNotification } from "naive-ui";
 
 import { info, warn } from "tauri-plugin-log-api";
 import { user } from "../store"
@@ -55,39 +53,24 @@ import { gacha_type, getUserGameRolesByStoken, getGachaAuthkey } from "../mihoyo
 import { sleep, short } from "../utils";
 import { getDb, val2sql, key2sql } from "../db";
 
-
 const props = defineProps({
     id: String,
 })
 
 const status = reactive({
     loading: false,
-    setLoadingStatus(status = true) {
-        this.loading = status
-    },
-})
-
-const alert = reactive({
-    type: "success",
     msg: "",
-    success(msg = "") {
-        this.type = "success"
-        this.msg = msg;
+    setLoadingStatus(status = true) {
+        this.loading = status;
+        this.msg = status ? this.msg : "";
     },
-    info(msg = "") {
-        this.type = "info"
-        this.msg = msg;
-    },
-    warn(msg = "") {
-        this.type = "warning"
-        this.msg = msg;
-    },
-    error(msg = "") {
-        this.type = "error"
+    setMsg(msg) {
         this.msg = msg;
     }
 })
 
+const notifyDuration = 2500;
+const notification = useNotification();
 
 
 const gameRolesList = reactive([]);
@@ -95,10 +78,23 @@ const gameRolesList = reactive([]);
 onMounted(async () => {
     const stoken = user.stoken;
     const mid = user.mid;
-    alert.info("Query game roles")
-    const resp = await getUserGameRolesByStoken({ stoken, mid });   //TODO: no internet error handle
 
-    switch (resp.retcode) {
+    await getUserGameRolesByStoken({ stoken, mid })
+        .then((resp) => handleRequestGameRoles(resp), (reason) => {
+            notification.warning({
+                title: "Network Error",
+                content: "Please check your internet connection.",
+                meta: "error sending request for getUserGameRoles",
+                duration: notifyDuration,
+                keepAliveOnHover: true
+            });
+        })
+})
+
+async function handleRequestGameRoles(resp) {
+    let retcode = 0;
+    retcode = resp.retcode;
+    switch (retcode) {
         case 0:
             const roles = resp.data.list;
             gameRolesList.push(...roles);
@@ -112,16 +108,29 @@ onMounted(async () => {
             user.region_name = region_name;
             break;
         case -100:  // stoken expired
-            alert.warn(resp)
+            notification.warning({
+                title: "Stoken expired",
+                content: resp.message,
+                meta: "Stoken expired. Please sign in.",
+                duration: notifyDuration,
+                keepAliveOnHover: true
+            });
             console.log(resp); warn(JSON.stringify(resp)); //TODO: generate stoken using game_token
             break;
         default:    // other error
-            alert.error(resp)
+            notification.error({
+                title: "Api error",
+                content: JSON.stringify(resp, null, 4),
+                meta: "This might be a bug, please report.",
+                duration: notifyDuration,
+                keepAliveOnHover: true
+            });
             console.log(resp); warn(JSON.stringify(resp));
             break;
     }
-    await sleep(200)
-})
+
+    return retcode;
+}
 
 async function getAllGachaLog() {
     status.setLoadingStatus(true);
@@ -133,12 +142,13 @@ async function getAllGachaLog() {
 
     const authkey = await getGachaAuthkey({ game_uid, region, stoken, mid })
     user.updateAuthkeyB(authkey);
-    alert.info("getGachaAuthkey")
+    status.setMsg("getGachaAuthkey")
 
     for (const [index, type] of gacha_type.entries()) {
-        if (index > 0) await sleep(200);
+        // if (index > 0) await sleep(200);
         await getGachaLog(user.authkeyB, type);
-        alert.info(`getGachaLog:${type}`)
+        status.setMsg(`getGachaLog:${type}`)
+        await sleep(200);
     }
 
     status.setLoadingStatus(false);
@@ -189,5 +199,8 @@ async function merge(list = []) {
 </script>
 
 <style scoped>
-
+.n-divider {
+    padding: 0%;
+    margin: 0%;
+}
 </style>

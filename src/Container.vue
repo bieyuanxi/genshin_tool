@@ -1,9 +1,12 @@
 <template>
-    <router-view></router-view>
+    <n-notification-provider>
+        <router-view />
+    </n-notification-provider>
 </template>
   
 <script setup>
 import { watch, watchEffect } from "vue";
+import { NNotificationProvider } from "naive-ui"
 import { info } from "tauri-plugin-log-api"
 
 import { getGachaAuthkey, getSToken, getUserGameRoles } from './mihoyo_api';
@@ -21,7 +24,7 @@ watch(
     () => user.game_token,
     async (newVal, oldVal) => {
         const msg = `user: ${user.uid}, game_token: ${short(user.game_token)}`;
-        console.log(msg);   info(msg);
+        console.log(msg); info(msg);
         const { stoken, mid } = await getSToken(user.uid, user.game_token);
         user.stoken = stoken;
         user.mid = mid;
