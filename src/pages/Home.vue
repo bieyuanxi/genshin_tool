@@ -80,15 +80,7 @@ onMounted(async () => {
     const mid = user.mid;
 
     await getUserGameRolesByStoken({ stoken, mid })
-        .then((resp) => handleRequestGameRoles(resp), (reason) => {
-            notification.warning({
-                title: "Network Error",
-                content: "Please check your internet connection.",
-                meta: "error sending request for getUserGameRoles",
-                duration: notifyDuration,
-                keepAliveOnHover: true
-            });
-        })
+        .then((resp) => handleRequestGameRoles(resp))
 })
 
 async function handleRequestGameRoles(resp) {
@@ -140,16 +132,27 @@ async function getAllGachaLog() {
     const region = user.region;
     const game_uid = user.game_uid;
 
-    const authkey = await getGachaAuthkey({ game_uid, region, stoken, mid })
-    user.updateAuthkeyB(authkey);
-    status.setMsg("getGachaAuthkey")
+    try {
+        const authkey = await getGachaAuthkey({ game_uid, region, stoken, mid })
+        user.updateAuthkeyB(authkey);
+        status.setMsg("getGachaAuthkey")
 
-    for (const [index, type] of gacha_type.entries()) {
-        // if (index > 0) await sleep(200);
-        await getGachaLog(user.authkeyB, type);
-        status.setMsg(`getGachaLog:${type}`)
-        await sleep(200);
+        for (const [index, type] of gacha_type.entries()) {
+            // if (index > 0) await sleep(200);
+            await getGachaLog(user.authkeyB, type);
+            status.setMsg(`getGachaLog:${type}`)
+            await sleep(200);
+        }
+    } catch (error) {
+        notification.warning({
+            title: "Network Error",
+            content: "Please check your internet connection.",
+            meta: "",
+            duration: notifyDuration,
+            keepAliveOnHover: true
+        });
     }
+
 
     status.setLoadingStatus(false);
 }

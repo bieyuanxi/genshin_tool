@@ -8,7 +8,9 @@
             </n-layout-sider>
 
             <n-layout content-style="padding: 12px;">
-                <Container></Container>
+                <n-notification-provider>
+                    <Container />
+                </n-notification-provider>
             </n-layout>
         </n-layout>
     </n-config-provider>
@@ -17,7 +19,7 @@
 <script setup>
 import { computed, h, onBeforeMount, ref, watch, watchEffect } from "vue";
 import { RouterLink, useRouter, useRoute } from "vue-router";
-import { NIcon, NLayout, NLayoutSider, NConfigProvider, NMenu } from "naive-ui";
+import { NIcon, NLayout, NLayoutSider, NConfigProvider, NMenu, NNotificationProvider } from "naive-ui";
 import { darkTheme, lightTheme } from 'naive-ui'
 import {
     BookOutline as BookIcon,

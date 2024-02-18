@@ -1,12 +1,10 @@
 <template>
-    <n-notification-provider>
-        <router-view />
-    </n-notification-provider>
+    <router-view />
 </template>
   
 <script setup>
-import { watch, watchEffect } from "vue";
-import { NNotificationProvider } from "naive-ui"
+import { onErrorCaptured, watch, watchEffect } from "vue";
+import { useNotification } from "naive-ui"
 import { info } from "tauri-plugin-log-api"
 
 import { getGachaAuthkey, getSToken, getUserGameRoles } from './mihoyo_api';
@@ -19,6 +17,23 @@ import { short } from './utils';
 //     const msg = `user: ${user.uid}`;
 //     console.log(msg); info(msg);
 // })
+const notifyDuration = 2500;
+const notification = useNotification();
+
+onErrorCaptured((e, instance, info) => {
+    if (e.toString().startsWith("Network Error")) { // e is string from tauri side, so nasty code is used
+        notification.warning({
+            title: "Network Error",
+            content: "Please check your internet connection.",
+            meta: info,
+            duration: notifyDuration,
+            keepAliveOnHover: true
+        });
+        return false;
+    }
+
+    console.log(e)
+})
 
 watch(
     () => user.game_token,
