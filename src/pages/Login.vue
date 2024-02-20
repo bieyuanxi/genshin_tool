@@ -5,6 +5,7 @@
             <n-flex vertical>
                 <UserList :list="list"></UserList>
                 <n-button @click="refresh(); login_by_QRCode = true;" v-if="!login_by_QRCode">or login by QRCode</n-button>
+                <p>支持 米游社/原神客户端/云原神 扫码登录</p>
             </n-flex>
 
             <n-flex vertical v-if="login_by_QRCode">

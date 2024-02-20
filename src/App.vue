@@ -49,7 +49,6 @@ const Container = defineAsyncComponent(async () => {
 
 watch(() => route.path, async () => {
     console.log(route.path)
-    console.log(show.value)
 })
 
 async function loadUser() {
