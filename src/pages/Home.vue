@@ -76,11 +76,28 @@ const notification = useNotification();
 const gameRolesList = reactive([]);
 
 onMounted(async () => {
-    const stoken = user.stoken;
-    const mid = user.mid;
+    // const stoken = user.stoken;
+    // const mid = user.mid;
+    // await getUserGameRolesByStoken({ stoken, mid })
+    //     .then((resp) => handleRequestGameRoles(resp))
+    const db = await getDb();
+    let sql = `SELECT * FROM game_roles WHERE uid=${user.uid}`;
+    const roles = await db.select(sql);
+    if (roles.length > 0) {
+        const role = roles[0]   //TODO: select last game_uid from db
+        user.updateCurrentRole(role);
 
-    await getUserGameRolesByStoken({ stoken, mid })
-        .then((resp) => handleRequestGameRoles(resp))
+        const { game_uid, region, game_biz, region_name, nickname } = role;
+        // FIX ME: nasty code
+        user.game_biz = game_biz;
+        user.game_uid = game_uid;
+        user.nickname = nickname;
+        user.region = region;
+        user.region_name = region_name;
+
+        gameRolesList.push(...roles);
+    }
+
 })
 
 async function handleRequestGameRoles(resp) {
@@ -90,7 +107,7 @@ async function handleRequestGameRoles(resp) {
         case 0:
             const roles = resp.data.list;
             gameRolesList.push(...roles);
-
+            console.log(roles)
             const { game_uid, region, game_biz, region_name, nickname } = roles[0];  //TODO: select last game_uid from db
             // FIX ME: nasty code
             user.game_biz = game_biz;

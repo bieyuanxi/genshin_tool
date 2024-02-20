@@ -7,8 +7,8 @@ import { onErrorCaptured, watch, watchEffect } from "vue";
 import { useNotification } from "naive-ui"
 import { info } from "tauri-plugin-log-api"
 
-import { getGachaAuthkey, getSToken, getUserGameRoles } from './mihoyo_api';
-import { getDb } from "./db"
+import { getGachaAuthkey, getSToken, getUserGameRoles, getUserGameRolesByStoken } from './mihoyo_api';
+import { getDb, val2sql, key2sql, obj2sql } from "./db"
 
 import { user } from "./store"
 import { short } from './utils';
@@ -44,6 +44,10 @@ watch(
         user.stoken = stoken;
         user.mid = mid;
         await sqlUpdateUser({ uid: user.uid, game_token: user.game_token, stoken, mid });
+
+        const resp = await getUserGameRolesByStoken({ stoken, mid })
+        const list = resp.data.list;
+        await sqlUpdateGameRole(list, user.uid);
     }
 )
 
@@ -57,6 +61,16 @@ async function sqlUpdateUser({ uid, game_token, stoken, mid }) {
     return await db.execute(sql);
 }
 
+async function sqlUpdateGameRole(list, uid) {
+    const time = (Date.now() / 1000).toFixed();
+    const db = await getDb();
+    for (const obj of list) {
+        obj.uid = uid; // add uid
+        const { keys, vals } = obj2sql(obj);
+        const sql = `REPLACE INTO game_roles (${keys}) VALUES (${vals})`;
+        await db.execute(sql);
+    }
+}
 
 // watch(
 //     () => user.game_token,

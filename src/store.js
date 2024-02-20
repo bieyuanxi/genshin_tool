@@ -13,6 +13,7 @@ export const user = reactive({
     game_token: "",
     stoken: "",
     authkeyB: "",
+    curr_role: {},
 
     updateUID(uid, game_token) {
         this.uid = uid;
@@ -31,5 +32,8 @@ export const user = reactive({
     },
     updateAuthkeyB(authkey) {
         this.authkeyB = authkey
+    },
+    updateCurrentRole(role) {
+        this.curr_role = role;
     }
 })

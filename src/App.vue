@@ -49,6 +49,7 @@ const Container = defineAsyncComponent(async () => {
 
 watch(() => route.path, async () => {
     console.log(route.path)
+    console.log(show.value)
 })
 
 async function loadUser() {
@@ -70,7 +71,8 @@ async function loadUser() {
 const collapsed = ref(true);
 const theme = ref(darkTheme);
 const select = ref(firstPage);
-const homePath = computed(() => `/home/${user.uid}`)
+const homePath = computed(() => `/home/${user.uid}`);
+const show = computed(() => (user.uid !== "" && user.uid !== null));
 
 const menuOptions = ref([
     {
@@ -83,6 +85,7 @@ const menuOptions = ref([
         label: routerLink(homePath, "Home"),
         key: "home",
         disabled: false,
+        show: show,
         icon: renderIcon(HomeIcon)
     },
     {
@@ -96,12 +99,14 @@ const menuOptions = ref([
         label: routerLink("/chart", "Chart"),
         key: "chart",
         disabled: false,
+        show: show,
         icon: renderIcon(PieChartIcon)
     },
     {
         label: routerLink("/data_table", "Data Table"),
         key: "data_table",
         disabled: false,
+        show: show,
         icon: renderIcon(DocumentIcon)
     },
     {

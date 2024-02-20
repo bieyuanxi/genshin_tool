@@ -21,6 +21,16 @@ export function val2sql(list = []) {
     return vals.toString();
 }
 
+export function obj2sql(obj) {
+    const keys = Object.keys(obj).toString();
+    const valsArr = Object.values(obj);
+    valsArr.forEach((val, index, arr) => {
+        arr[index] = `'${val}'`;
+    });
+    const vals = valsArr.toString();
+    return { keys, vals }
+}
+
 export async function insertInto(table = "", list = []) {
     if (list.length == 0) return null;
 
@@ -103,9 +113,28 @@ async function _create_tbl(db) {
             login_time  INT     NOT NULL
         );`
     );
+
+    await db.execute(
+        `CREATE TABLE IF NOT EXISTS game_roles(
+            game_uid    TEXT NOT NULL,
+            game_biz    TEXT NOT NULL,
+            nickname    TEXT NOT NULL,
+            region      TEXT NOT NULL,
+            region_name TEXT NOT NULL,
+            level       INT NOT NULL,
+            is_chosen   BOOLEAN,
+            is_official BOOLEAN,
+            uid         TEXT NOT NULL,
+            PRIMARY KEY(uid, game_uid),
+            FOREIGN KEY(uid)
+            REFERENCES users (uid)
+                ON UPDATE CASCADE
+                ON DELETE CASCADE
+        );`
+    )
 }
 
-export async function getDb(name = db_name){
+export async function getDb(name = db_name) {
     return await Database.load(name);
 }
 
