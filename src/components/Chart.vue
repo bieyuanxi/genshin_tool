@@ -1,11 +1,11 @@
 <template>
     <n-flex vertical style="height: 100%;">
-        <v-chart :option="option" autoresize class="chart"/>
+        <v-chart :option="option" autoresize class="chart" />
         <n-divider />
         <n-flex>
             <n-tag size="small" v-for="one in props.list">{{ one.name }}[{{ one.count }}]</n-tag>
         </n-flex>
-        
+
     </n-flex>
 </template>
 
@@ -30,7 +30,7 @@ use([
     LegendComponent,
 ]);
 
-provide(THEME_KEY, 'white');
+// provide(THEME_KEY, 'dark');
 
 const props = defineProps({
     title: String,
@@ -54,6 +54,9 @@ const option = ref({
     title: {
         text: props.title,
         left: 'center',
+        textStyle: {
+            color: '#666'
+        }
     },
     tooltip: {
         trigger: 'item',
@@ -63,12 +66,16 @@ const option = ref({
         orient: 'vertical',
         left: 'left',
         data: legend,
+        textStyle: {
+            color: 'inherite',
+            fontWeight: 'bold',
+        }
     },
     series: [
         {
             name: props.title,
             type: 'pie',
-            radius: '55%',
+            radius: '60%',
             center: ['50%', '60%'],
             data: props.data,
             emphasis: {
@@ -78,6 +85,17 @@ const option = ref({
                     shadowColor: 'rgba(0, 0, 0, 0.5)',
                 },
             },
+            // minAngle: 1,    //最小的扇区角度（0 ~ 360），用于防止某个值过小导致扇区太小影响交互。
+            minShowLabelAngle: 1,   //小于这个角度（0 ~ 360）的扇区，不显示标签（label 和 labelLine）
+            label: {
+                show: true,
+                color: 'inherit',
+                textBorderColor: 'inherit',
+                fontWeight: 'bold',
+                overflow: 'breakAll',    //强制单词内换行
+                bleedMargin: 0,
+                distanceToLabelLine: 0
+            },
         },
     ],
 });
@@ -86,9 +104,10 @@ const option = ref({
 
 <style scoped>
 .chart {
-    height: 70%;
+    height: 50%;
     width: 100%;
 }
+
 .n-divider {
     /* height: 100%; */
     padding: 0%;

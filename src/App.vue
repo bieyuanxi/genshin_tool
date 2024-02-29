@@ -111,8 +111,8 @@ const menuOptions = ref([
     {
         label: routerLink("/setting", "Setting"),
         key: "setting",
-        disabled: true,
-        show: false,
+        disabled: !(import.meta.env.DEV),
+        show: (import.meta.env.DEV),
         icon: renderIcon(SettingsIcon)
     },
     {
