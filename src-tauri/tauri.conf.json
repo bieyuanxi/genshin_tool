@@ -19,7 +19,10 @@
       },
       "http": {
         "request": true,
-        "scope": ["https://*", "https://hk4e-api.mihoyo.com/*"]
+        "scope": [
+          "https://*",
+          "https://hk4e-api.mihoyo.com/*"
+        ]
       },
       "fs": {
         "all": true,
@@ -32,7 +35,15 @@
         "removeFile": true,
         "renameFile": true,
         "exists": true,
-        "scope": ["$CONFIG/*", "$CONFIG/**", "$APPDATA/**"]
+        "scope": [
+          "$CONFIG/*",
+          "$CONFIG/**",
+          "$APPDATA/**",
+          "$RESOURCE/lang/*"
+        ]
+      },
+      "path": {
+        "all": true
       }
     },
     "bundle": {
@@ -45,6 +56,9 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
+      ],
+      "resources": [
+        "lang/*"
       ]
     },
     "security": {

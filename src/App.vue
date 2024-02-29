@@ -34,38 +34,15 @@ import {
 
 import { user } from "./store"
 import { firstPage } from "./config";
-import { create_table, getDb } from "./db"
+
+import Container from "./Container.vue";
 
 const router = useRouter();
 const route = useRoute();
 
-const Container = defineAsyncComponent(async () => {
-    await create_table();
-    await loadUser();
-    await router.replace(firstPage);
-
-    return import("./Container.vue")
-})
-
 watch(() => route.path, async () => {
     console.log(route.path)
 })
-
-async function loadUser() {
-    let db = await getDb();
-
-    let ret = await db.select("SELECT * FROM users ORDER BY login_time DESC LIMIT 1");
-    if (ret.length > 0) {
-        const row = ret[0];
-
-        user.uid = row.uid;
-        user.game_token = row.game_token;
-        user.mid = row.mid;
-        user.stoken = row.stoken;
-    }
-
-    // console.log(user)
-}
 
 const collapsed = ref(true);
 const theme = ref(darkTheme);
