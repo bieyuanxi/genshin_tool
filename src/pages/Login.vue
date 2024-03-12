@@ -1,5 +1,5 @@
 <template>
-    <n-flex vertical>
+    <!-- <n-flex vertical>
         <p style="text-align: center;">Login</p>
         <n-flex justify="center" size="large">
             <n-flex vertical>
@@ -14,7 +14,51 @@
                 <p>{{ msg }}</p>
             </n-flex>
         </n-flex>
-    </n-flex>
+    </n-flex> -->
+    <n-card title="" style="margin-bottom: 16px">
+        <n-tabs type="line" animated size="large">
+            <n-tab-pane name="login" tab="All users">
+                <UserList :list="list"></UserList>
+            </n-tab-pane>
+            <n-tab-pane name="the beatles" tab="Scan QR code">
+                <n-flex vertical>
+                    <n-qr-code :value="qr_text" :size="240" @click="refresh" />
+                    <p>支持 米游社/原神客户端/云原神 扫码登录</p>
+                    <p>{{ qr_status }}</p>
+                    <p>{{ msg }}</p>
+                </n-flex>
+            </n-tab-pane>
+            <n-tab-pane name="signin" tab="登录">
+                <n-form>
+                    <n-form-item-row label="用户名">
+                        <n-input />
+                    </n-form-item-row>
+                    <n-form-item-row label="密码">
+                        <n-input />
+                    </n-form-item-row>
+                </n-form>
+                <n-button type="primary" block secondary strong>
+                    登录
+                </n-button>
+            </n-tab-pane>
+            <n-tab-pane name="signup" tab="注册">
+                <n-form>
+                    <n-form-item-row label="用户名">
+                        <n-input />
+                    </n-form-item-row>
+                    <n-form-item-row label="密码">
+                        <n-input />
+                    </n-form-item-row>
+                    <n-form-item-row label="重复密码">
+                        <n-input />
+                    </n-form-item-row>
+                </n-form>
+                <n-button type="primary" block secondary strong>
+                    注册
+                </n-button>
+            </n-tab-pane>
+        </n-tabs>
+    </n-card>
 </template>
 
 <script setup>
