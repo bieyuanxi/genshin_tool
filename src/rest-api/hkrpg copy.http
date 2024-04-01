@@ -1,0 +1,14 @@
+GET https://api-takumi.mihoyo.com/common/gacha_record/api/getGachaLog
+?authkey_ver=1
+# &lang=zh-cn
+# &gacha_type=11
+# &page=1
+# &end_id=0
+# &size=10
+&game_biz=hkrpg_cn
+&lang=zh-cn
+&size=20
+&end_id=1701155160000057096
+# &page=1
+&gacha_type=301
+&authkey=c38pSroVajsCsre%2fsTnZ3jxEvzOInhDXUI8pCuIf9%2bNRidnvYr6QBIACoJWsNVe1xUH0%2f9vsmcyYOgukf1Np7tIXOA2wd82sR836lt9FI%2f0yKS%2bRGYg1hcjcqp9mZvBz8fF9qOCG2jn0NFvnnrYwj%2bfAh3VG8wZavFMwKFRS5NUgBaTql6MiGHRyrp538NZ64DU%2bfK9Ao28jkDWi0kEnxes%2bplMHyLtY%2bgglRHtsciW7JkhDAFl%2bcxjMpncO1TYB1yAhYQlZhGden67%2fzh2gRXtzddRZpHyrx9B%2fP%2b%2bW%2f%2f6be4NIeU4q68AWLqu4i1G%2fSRJ%2bgQAn8tMhgzLK%2fI2%2fJA%3d%3d

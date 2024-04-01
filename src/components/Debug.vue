@@ -4,14 +4,14 @@
         <n-button type="tertiary">
             Load Config
         </n-button>
-        <n-button type="primary" @click="getGachaLog({ type: 301, endId: 0 })">
-            Request Genshin Data
+        <n-button type="primary" @click="getAuthKeyHKRPG">
+            getAuthKeyHKRPG
         </n-button>
         <n-button type="info" @click="create_table">
             create table
         </n-button>
-        <n-button type="success" @click="getGaChaAuthKey">
-            Read AuthKey
+        <n-button type="success" @click="getUserGameRoles">
+            getUserGameRolesByStoken
         </n-button>
         <n-button type="warning" @click="router.replace('/chart')">
             Router
@@ -35,6 +35,7 @@ import { sys_config, db_name } from "../config";
 import { insertInto, create_table } from "../db"
 import { user } from "../store";
 import { short } from "../utils";
+import { genAuthKeyB, getUserGameRolesByStoken } from "../mihoyo_api";
 
 /*
         `CREATE TABLE IF NOT EXISTS user(
@@ -66,5 +67,26 @@ const replacer = (key, val) => {
         return short(val)
     }
     return val
+}
+
+
+
+
+async function getAuthKeyHKRPG() {
+    const stoken = user.stoken;
+    const mid = user.mid;
+    const region = "prod_gf_cn";
+    const game_uid = "100572813";
+    const game_biz = "hkrpg_cn";
+    // const game_biz = "hk4e_cn";
+
+    await genAuthKeyB({ game_uid, region, stoken, game_uid, mid, game_biz })
+}
+
+async function getUserGameRoles() {
+    const stoken = user.stoken;
+    const mid = user.mid;
+    const game_biz = "hkrpg_cn";
+    await getUserGameRolesByStoken({stoken, mid, game_biz});
 }
 </script>

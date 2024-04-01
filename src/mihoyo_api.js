@@ -7,6 +7,8 @@ export const mysPassportDomain = "https://passport-api.miyoushe.com";
 const app_id = "bll8iq97cem8";
 const device_id = "flyme2genshin";
 
+const genshin_app_id = "4";    //4 =《原神》
+
 //中国版米游社salt
 //https://githubfast.com/UIGF-org/mihoyo-api-collect/issues/1
 const mys_ver = "2.63.1";
@@ -72,7 +74,7 @@ export async function createGenshinQRLogin() {
     const resp = await fetch(url, {
         method: "POST",
         query: {
-            app_id: "4",    //4 《原神》
+            app_id: genshin_app_id,
             device: device_id,
         },
         responseType: ResponseType.JSON
@@ -91,7 +93,7 @@ export async function queryGenshinQRLoginStatus(ticket) {
     const resp = await fetch(url, {
         method: "POST",
         query: {
-            app_id: "4",
+            app_id: genshin_app_id,
             device: device_id,
             ticket: ticket
         },
@@ -128,7 +130,7 @@ export async function getTokenByGameToken({ account_id, game_token }) {
  * @param {*} param0 
  * @returns authkeyB
  */
-export async function genAuthKeyB({ game_uid = "", region = "cn_gf01", stoken = "", mid = "" }) {
+export async function genAuthKeyB({ game_uid = "", region = "cn_gf01", stoken = "", mid = "", game_biz = "hk4e_cn" }) {
     const url = `https://api-takumi.miyoushe.com/binding/api/genAuthKey`;
     const resp = await fetch(url, {
         method: "POST",
@@ -141,7 +143,7 @@ export async function genAuthKeyB({ game_uid = "", region = "cn_gf01", stoken = 
             "Cookie": `stoken=${stoken};mid=${mid}`,
         },
         query: {
-            game_biz: "hk4e_cn",
+            game_biz,
             game_uid,
             region,
             auth_appid: "webview_gacha",
@@ -158,7 +160,7 @@ export async function genAuthKeyB({ game_uid = "", region = "cn_gf01", stoken = 
  * @param {*} param0 
  * @returns All of the roles the account has
  */
-export async function getUserGameRolesByStoken({ stoken = "", mid = "" }) {
+export async function getUserGameRolesByStoken({ stoken = "", mid = "", game_biz = "hk4e_cn" }) {
     const url = `https://api-takumi.miyoushe.com/binding/api/getUserGameRolesByStoken`;
     const resp = await fetch(url, {
         method: "GET",
@@ -171,11 +173,11 @@ export async function getUserGameRolesByStoken({ stoken = "", mid = "" }) {
             "Cookie": `stoken=${stoken};mid=${mid}`,
         },
         query: {
-            game_biz: "hk4e_cn",    //genshin
+            game_biz,    //genshin
         },
         responseType: ResponseType.JSON
     });
-    // console.log(resp.data)
+    console.log(resp.data)
 
     return resp.data;
 }
