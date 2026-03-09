@@ -2,6 +2,9 @@
     <n-button type="info" @click="getAllGachaLog">
         Update Gacha Data
     </n-button>
+    <n-button type="info" @click="tryCacheLocalAuthKey">
+        Try Catch Local AuthKey
+    </n-button>
     <pre>{{ JSON.stringify(user, replacer, 4) }}</pre>
 </template>
 
@@ -12,7 +15,7 @@
 import { computed } from "vue";
 import { info, warn } from "tauri-plugin-log-api";
 import { user } from "../store"
-import { requestGachaLog } from "../genshin";
+import { getGaChaAuthKey, requestGachaLog } from "../genshin";
 import { gacha_type } from "../mihoyo_api";
 import { sleep, short } from "../utils";
 import { getDb, val2sql, key2sql } from "../db";
@@ -51,6 +54,10 @@ on Linux:
 On Windows:
     TODO
 */
+
+async function tryCacheLocalAuthKey() {
+  user.authkeyB = await getGaChaAuthKey()
+}
 
 async function getAllGachaLog(){
     for (const type of gacha_type) {

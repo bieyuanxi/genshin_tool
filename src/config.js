@@ -6,8 +6,8 @@ export const appName = "flyme2genshin"
 
 export const timeout = 15 * 1000   //15 seconds
 
-export const apiDomain = "https://hk4e-api.mihoyo.com"
-export const apiPath = "event/gacha_info/api/getGachaLog"
+export const apiDomain = "https://public-operation-hk4e.mihoyo.com"
+export const apiPath = "gacha_info/api/getGachaLog"
 
 export const firstPage = "login"
 
