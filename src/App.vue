@@ -69,7 +69,7 @@ watch(
 )
 
 /*** before app mount ***/
-create_table();
+// create_table();
 /*** end ***/
 </script>
 

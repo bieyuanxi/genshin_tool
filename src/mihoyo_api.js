@@ -9,9 +9,9 @@ const device_id = "flyme2genshin";
 
 //中国版米游社salt
 //https://githubfast.com/UIGF-org/mihoyo-api-collect/issues/1
-const mys_ver = "2.63.1";
-const salt_LK2 = "9ttJY72HxbjwWRNHJvn0n2AYue47nYsK";    //mys v2.63.1
-const salt_K2 = "BIPaooxbWZW02fGHZL1If26mYCljPgst";
+const mys_ver = "2.71.1";
+const salt_LK2 = "EJncUPGnOHajenjLhBOsdpwEMZmiCmQX";
+const salt_K2 = "rtvTthKxEyreVXQCnhluFgLXPOFKPHlA";
 
 const x_rpc_client_type = Object.freeze({
     IOS: "1",

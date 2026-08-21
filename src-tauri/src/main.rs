@@ -5,6 +5,7 @@ use log::LevelFilter;
 use tauri_plugin_log::LogTarget;
 
 mod genshin_service;
+mod migrations;
 mod utils;
 
 use genshin_service::read_web_cache;
@@ -18,7 +19,11 @@ fn greet(name: &str) -> String {
 
 fn main() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_sql::Builder::default().build())
+        .plugin(
+            tauri_plugin_sql::Builder::default()
+                .add_migrations("sqlite:local_data.db", migrations::migrations())
+                .build(),
+        )
         .plugin(
             tauri_plugin_log::Builder::default()
                 .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
